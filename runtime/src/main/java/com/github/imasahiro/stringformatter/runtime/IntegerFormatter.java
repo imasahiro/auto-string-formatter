@@ -5,19 +5,19 @@ import com.google.common.annotations.VisibleForTesting;
 public class IntegerFormatter {
     static public final int PADDED_WITH_ZEROS = 1;
 
-    public static void formatTo(StringBuilder sb, short v, int flags, int width) {
+    public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
         long unsigned = Math.abs(v);
-        format0(sb, unsigned, v < 0, flags, width);
+        return format0(sb, unsigned, v < 0, flags, width);
     }
 
-    public static void formatTo(StringBuilder sb, int v, int flags, int width) {
+    public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
         long unsigned = Math.abs(v);
-        format0(sb, unsigned, v < 0, flags, width);
+        return format0(sb, unsigned, v < 0, flags, width);
     }
 
-    public static void formatTo(StringBuilder sb, long v, int flags, int width) {
+    public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
         long unsigned = Math.abs(v);
-        format0(sb, unsigned, v < 0, flags, width);
+        return format0(sb, unsigned, v < 0, flags, width);
     }
 
     static private final long powersOf10[] = {
@@ -74,7 +74,7 @@ public class IntegerFormatter {
             '9', '0', '9', '1', '9', '2', '9', '3', '9', '4', '9', '5', '9', '6', '9', '7', '9', '8', '9', '9'
     };
 
-    static private void format0(StringBuilder sb, long val, boolean negative, int flags, int width) {
+    static private StringBuilder format0(StringBuilder sb, long val, boolean negative, int flags, int width) {
         int len = log10(val) + (negative ? 1 : 0);
         if ((flags & PADDED_WITH_ZEROS) != PADDED_WITH_ZEROS) {
             for (int i = len; i < width; i++) {
@@ -97,6 +97,7 @@ public class IntegerFormatter {
         } else {
             formatMoreThan10Quadrillion(sb, val);
         }
+        return sb;
     }
 
     static private void formatMoreThan10Quadrillion(StringBuilder sb, long val) {
