@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>annotations</module>
+        <module>runtime</module>
         <module>processor</module>
         <module>example</module>
     </modules>
