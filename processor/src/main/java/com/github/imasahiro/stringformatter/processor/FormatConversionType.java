@@ -5,7 +5,6 @@ import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Set;
 
-import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -59,9 +58,11 @@ public abstract class FormatConversionType {
             return ImmutableSet.of(short.class, int.class, long.class);
         }
 
+        private final String FORMATTER_NAME = "com.github.imasahiro.stringformatter.runtime.IntegerFormatter";
+
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
-            return "IntegerFormatter.formatTo(%BUFFER%, %ARG%, %flags%, %width%);\n"
+            return FORMATTER_NAME + ".formatTo(%BUFFER%, %ARG%, %flags%, %width%);\n"
                     .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
                     .replace("%ARG%", arg)
                     .replace("%flags%", convertFlags(flags))
@@ -71,7 +72,8 @@ public abstract class FormatConversionType {
         private String convertFlags(Set<FormatFlag> flags) {
             // TODO Support left-justified.
             if (flags.contains(FormatFlag.ZERO)) {
-                return String.valueOf(IntegerFormatter.PADDED_WITH_ZEROS);
+                return String.valueOf(
+                        com.github.imasahiro.stringformatter.runtime.IntegerFormatter.PADDED_WITH_ZEROS);
             }
             return "0";
         }
