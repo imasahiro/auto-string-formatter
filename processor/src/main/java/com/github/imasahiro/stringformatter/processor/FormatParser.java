@@ -33,7 +33,6 @@ public class FormatParser {
     public static List<FormatString> parse(String fmt) {
         ArrayList<FormatString> formatStrings = new ArrayList<>();
         Matcher m = FORMAT_SPECIFIER_PATTERN.matcher(fmt);
-        System.out.println(fmt);
         int index = 0;
         for (int i = 0; i < fmt.length(); ) {
             if (m.find(i)) {

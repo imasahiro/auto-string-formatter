@@ -38,7 +38,6 @@ public class StringFormatterProcessor extends AbstractProcessor {
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         roundEnv.getElementsAnnotatedWith(StringFormatter.class).forEach(element -> {
-            System.out.println(element.toString());
             Formatter formatter = buildFormatterType(element);
             JavaFile javaFile = JavaFile.builder(formatter.getPackageName(),
                                                  formatter.getType())
@@ -57,7 +56,6 @@ public class StringFormatterProcessor extends AbstractProcessor {
     private Formatter buildFormatterType(Element element) {
         StringFormatter fmt = element.getAnnotation(StringFormatter.class);
         String formatterName = "StringFormatter_" + element.getSimpleName();
-        System.out.println(formatterName + ":" + fmt.value());
         return Formatter.builder()
                         .pkg(MoreElements.getPackage(element))
                         .name(formatterName)
