@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-      <groupId>com.github.imasahiro</groupId>
-      <artifactId>string-formatter</artifactId>
-      <version>0.2.0</version>
+    <groupId>com.github.imasahiro</groupId>
+    <artifactId>string-formatter</artifactId>
+    <version>0.2.0</version>
   </parent>
 
-  <groupId>com.github.imasahiro</groupId>
   <artifactId>string-formatter-example</artifactId>
   <version>0.2.0</version>
 
@@ -26,7 +25,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <!-- Workaround for 'java.lang.IllegalStateException:
-               endPosTable already set on repeated mvn compile' //-->
+     endPosTable already set on repeated mvn compile' //-->
           <useIncrementalCompilation>false</useIncrementalCompilation>
         </configuration>
       </plugin>
@@ -34,9 +33,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.github.imasahiro</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>string-formatter-processor</artifactId>
-      <version>0.2.0</version>
+      <version>${project.parent.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
