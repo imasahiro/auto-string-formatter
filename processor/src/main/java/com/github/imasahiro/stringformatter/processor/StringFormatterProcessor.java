@@ -62,6 +62,7 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .pkg(MoreElements.getPackage(element))
                         .name(formatterName)
                         .formatter(fmt.value())
+                        .bufferCapacity(fmt.capacity())
                         .build();
     }
 

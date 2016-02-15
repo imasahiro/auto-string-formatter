@@ -24,5 +24,10 @@ import java.lang.annotation.Target;
 @Target({ ANNOTATION_TYPE })
 @Retention(RetentionPolicy.SOURCE)
 public @interface StringFormatter {
+    // format string.
     String value();
+
+    // The initial capacity of a buffer.
+    // Default capacity is the Default capacity of StringBuilder's buffer.
+    int capacity() default 16;
 }

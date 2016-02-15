@@ -35,11 +35,13 @@ import com.squareup.javapoet.TypeSpec;
 class Formatter {
     private final String name;
     private final String format;
+    private final int bufferCapacity;
     private final PackageElement packageElement;
 
-    Formatter(String name, String format, PackageElement packageElement) {
+    Formatter(String name, String format, int bufferCapacity, PackageElement packageElement) {
         this.name = name;
         this.format = format;
+        this.bufferCapacity = bufferCapacity;
         this.packageElement = packageElement;
     }
 
@@ -85,7 +87,8 @@ class Formatter {
 
     private CodeBlock buildBody(List<FormatString> formatStringList, List<Type> argumentTypes) {
         CodeBlock.Builder builder = CodeBlock.builder()
-                                             .add("final StringBuilder sb = new StringBuilder();\n");
+                                             .add("final StringBuilder sb = new StringBuilder(" +
+                                                  bufferCapacity + ");\n");
         int idx = 0;
         for (int i = 0; i < formatStringList.size(); i++) {
             FormatString formatString = formatStringList.get(i);
@@ -106,6 +109,7 @@ class Formatter {
     static class Builder {
         private String name;
         private PackageElement pkg;
+        private int bufferCapacity;
         private String format;
 
         public Builder name(String name) {
@@ -123,8 +127,12 @@ class Formatter {
             return this;
         }
 
+        public Builder bufferCapacity(int bufferCapacity) {
+            this.bufferCapacity = bufferCapacity;
+            return this;
+        }
         public Formatter build() {
-            return new Formatter(name, format, pkg);
+            return new Formatter(name, format, bufferCapacity, pkg);
         }
     }
 
