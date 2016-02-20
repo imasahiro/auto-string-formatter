@@ -32,7 +32,7 @@ class FixedString implements FormatString {
     static FixedString of(String s, int begin, int end) {
         for (int i = begin; i < end; i++) {
             if (s.charAt(i) == '%') {
-                String conversion = (i != end - 1) ? String.valueOf(s.charAt(i + 1)) : "";
+                String conversion = i != end - 1 ? String.valueOf(s.charAt(i + 1)) : "";
                 throw new IllegalArgumentException("Unrecognized conversion : " + conversion);
             }
         }

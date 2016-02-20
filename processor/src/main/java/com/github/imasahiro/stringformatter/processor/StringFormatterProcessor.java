@@ -63,5 +63,4 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .bufferCapacity(fmt.capacity())
                         .build();
     }
-
 }

@@ -91,7 +91,7 @@ public abstract class FormatConversionType {
             // TODO Support left-justified.
             if (flags.contains(FormatFlag.ZERO)) {
                 return String.valueOf(
-                        com.github.imasahiro.stringformatter.runtime.IntegerFormatter.PADDED_WITH_ZEROS);
+                        IntegerFormatter.PADDED_WITH_ZEROS);
             }
             return "0";
         }
@@ -112,8 +112,8 @@ public abstract class FormatConversionType {
     }
 
     public static class StringFormatConversionType extends FormatConversionType {
-        static private final TypeName FORMATTABLE_TYPE = TypeName.get(Formattable.class);
-        static private final TypeName FORMATTER_TYPE = TypeName.get(java.util.Formatter.class);
+        private static final TypeName FORMATTABLE_TYPE = TypeName.get(Formattable.class);
+        private static final TypeName FORMATTER_TYPE = TypeName.get(java.util.Formatter.class);
 
         @Override
         public Set<TypeName> getType() {
@@ -123,7 +123,7 @@ public abstract class FormatConversionType {
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeName argumentType) {
-            if (FORMATTABLE_TYPE.equals((argumentType))) {
+            if (FORMATTABLE_TYPE.equals(argumentType)) {
                 return "%ARG%.formatTo(new %FORMATTER_TYPE%(%BUFFER%), %flags%, %width%, %precision%);\n"
                         .replace("%FORMATTER_TYPE%", FORMATTER_TYPE.toString())
                         .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)

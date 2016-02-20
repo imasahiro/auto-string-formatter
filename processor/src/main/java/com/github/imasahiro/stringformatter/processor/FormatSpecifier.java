@@ -58,7 +58,7 @@ class FormatSpecifier implements FormatString {
     }
 
     public FormatConversionType getConversionType() {
-        return this.type;
+        return type;
     }
 
     static FormatString of(String s, Matcher m, int index) {

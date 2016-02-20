@@ -28,7 +28,7 @@ public class Benchmark {
         }
 
         long end = System.currentTimeMillis();
-        System.out.println("Format = " + ((end - start)) + " millisecond");
+        System.out.println("Format = " + end - start + " millisecond");
 
         start = System.currentTimeMillis();
 
@@ -36,7 +36,7 @@ public class Benchmark {
             s = javaStringConcat(i);
         }
         end = System.currentTimeMillis();
-        System.out.println("Concatenation = " + ((end - start)) + " millisecond");
+        System.out.println("Concatenation = " + end - start + " millisecond");
 
         start = System.currentTimeMillis();
 
@@ -45,14 +45,14 @@ public class Benchmark {
         }
 
         end = System.currentTimeMillis();
-        System.out.println("String Builder = " + ((end - start)) + " millisecond");
+        System.out.println("String Builder = " + end - start + " millisecond");
 
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
             s = StringFormatter_Formatter.format(i, i * 2);
         }
         end = System.currentTimeMillis();
-        System.out.println("StringFormatter = " + ((end - start)) + " millisecond");
+        System.out.println("StringFormatter = " + end - start + " millisecond");
     }
 
     private static String stringBuilder(int i) {

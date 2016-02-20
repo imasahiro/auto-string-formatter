@@ -49,7 +49,7 @@ class Formatter {
     }
 
     public String getSourceFileName() {
-        return packageElement.toString() + "." + name;
+        return packageElement + "." + name;
     }
 
     public TypeSpec getType() {
@@ -134,5 +134,4 @@ class Formatter {
             return new Formatter(name, format, bufferCapacity, pkg);
         }
     }
-
 }
