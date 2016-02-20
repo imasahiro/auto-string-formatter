@@ -142,7 +142,7 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .formatter(fmt.value())
                         .bufferCapacity(fmt.capacity())
                         .argumentTypeNames(method.getParameters().stream()
-                                                 .map(e -> TypeName.get(e.asType()))
+                                                 .map(e -> e.asType())
                                                  .collect(GuavaCollectors.toImmutableList()))
                         .build();
     }

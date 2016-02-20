@@ -15,10 +15,14 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.lang.reflect.Type;
 import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Set;
+
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.google.common.base.Joiner;
@@ -27,24 +31,22 @@ import com.google.common.collect.ImmutableSet;
 import com.squareup.javapoet.TypeName;
 
 public abstract class FormatConversionType {
-    abstract Set<TypeName> getType();
+    abstract Set<TypeMirror> getType(Types typeUtil, Elements elementUtil);
 
     public String emit(String arg, int width, int precision,
-                       Set<FormatFlag> flags, TypeName argumentType) {
+                       Set<FormatFlag> flags, TypeMirror argumentType) {
         return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
     }
 
     public static class BooleanFormatConversionType extends FormatConversionType {
         @Override
-        public Set<TypeName> getType() {
-            return ImmutableSet.of(TypeName.BOOLEAN);
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.BOOLEAN));
         }
-
-        Type booleanType = boolean.class;
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
-                           TypeName argumentType) {
+                           TypeMirror argumentType) {
             StringBuilder sb = new StringBuilder();
             if (width > "TRUE".length()) {
                 String widthTemplate = "int %ARG%_len = %ARG% ? 4/*true*/ : 5/*false*/;\n" +
@@ -63,28 +65,30 @@ public abstract class FormatConversionType {
 
     public static class CharacterFormatConversionType extends FormatConversionType {
         @Override
-        public Set<TypeName> getType() {
-            return ImmutableSet.of(TypeName.CHAR);
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.CHAR));
         }
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
-                           TypeName argumentType) {
+                           TypeMirror argumentType) {
             return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
         }
     }
 
     public static class IntegerFormatConversionType extends FormatConversionType {
         @Override
-        public Set<TypeName> getType() {
-            return ImmutableSet.of(TypeName.SHORT, TypeName.INT, TypeName.LONG);
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.SHORT),
+                                   typeUtil.getPrimitiveType(TypeKind.INT),
+                                   typeUtil.getPrimitiveType(TypeKind.LONG));
         }
 
         private static final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
-                           TypeName argumentType) {
+                           TypeMirror argumentType) {
             return FORMATTER_NAME + ".formatTo(%BUFFER%, %ARG%, %flags%, %width%);\n"
                     .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
                     .replace("%ARG%", arg)
@@ -105,13 +109,14 @@ public abstract class FormatConversionType {
 
     public static class FloatFormatConversionType extends FormatConversionType {
         @Override
-        public Set<TypeName> getType() {
-            return ImmutableSet.of(TypeName.FLOAT, TypeName.DOUBLE);
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.FLOAT),
+                                   typeUtil.getPrimitiveType(TypeKind.DOUBLE));
         }
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
-                           TypeName argumentType) {
+                           TypeMirror argumentType) {
             return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
         }
     }
@@ -121,14 +126,15 @@ public abstract class FormatConversionType {
         private static final TypeName FORMATTER_TYPE = TypeName.get(java.util.Formatter.class);
 
         @Override
-        public Set<TypeName> getType() {
-            return ImmutableSet.of(FORMATTABLE_TYPE, TypeName.OBJECT);
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(elementUtil.getTypeElement(Formattable.class.getCanonicalName()).asType(),
+                                   elementUtil.getTypeElement(Object.class.getCanonicalName()).asType());
         }
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
-                           TypeName argumentType) {
-            if (FORMATTABLE_TYPE.equals(argumentType)) {
+                           TypeMirror argumentType) {
+            if (FORMATTABLE_TYPE.equals(TypeName.get(argumentType))) {
                 return "%ARG%.formatTo(new %FORMATTER_TYPE%(%BUFFER%), %flags%, %width%, %precision%);\n"
                         .replace("%FORMATTER_TYPE%", FORMATTER_TYPE.toString())
                         .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)

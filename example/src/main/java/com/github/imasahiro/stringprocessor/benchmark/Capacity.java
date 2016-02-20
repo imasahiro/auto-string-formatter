@@ -25,7 +25,7 @@ public class Capacity {
     @AutoStringFormatter
     interface CapacityFormatter {
         @Format(value = FORMAT, capacity = 32 * 6)
-        String format(int a, int b, int c, int d, int e);
+        String format(int a, int b, int c, int d, int e, int g);
     }
 
     public static void main(String... args) {

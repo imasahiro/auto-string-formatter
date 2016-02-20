@@ -35,24 +35,25 @@ class Formatter {
     private final String name;
     private final String format;
     private final int bufferCapacity;
-    private final List<TypeName> argumentTypeNames;
+    private final List<TypeMirror> argumentTypes;
 
-    Formatter(String name, String format, int bufferCapacity, List<TypeName> argumentTypeNames) {
+    Formatter(String name, String format, int bufferCapacity, List<TypeMirror> argumentTypes) {
         this.name = name;
         this.format = format;
         this.bufferCapacity = bufferCapacity;
-        this.argumentTypeNames = argumentTypeNames;
+        this.argumentTypes = argumentTypes;
     }
 
-    private static List<ParameterSpec> buildParamTypes(List<TypeName> argumentTypes) {
+    private static List<ParameterSpec> buildParamTypes(List<TypeMirror> argumentTypes) {
         ImmutableList.Builder<ParameterSpec> builder = ImmutableList.builder();
         for (int i = 0; i < argumentTypes.size(); i++) {
-            builder.add(ParameterSpec.builder(argumentTypes.get(i), "arg" + i, Modifier.FINAL).build());
+            builder.add(ParameterSpec.builder(TypeName.get(argumentTypes.get(i)),
+                                              "arg" + i, Modifier.FINAL).build());
         }
         return builder.build();
     }
 
-    private CodeBlock buildBody(List<FormatString> formatStringList, List<TypeName> argumentTypes) {
+    private CodeBlock buildBody(List<FormatString> formatStringList, List<TypeMirror> argumentTypes) {
         CodeBlock.Builder builder = CodeBlock.builder()
                                              .add("final StringBuilder sb = new StringBuilder(" +
                                                   bufferCapacity + ");\n");
@@ -70,7 +71,7 @@ class Formatter {
     }
 
     private void checkArgumentTypes(ProcessingEnvironment processingEnv, List<FormatString> formatStringList,
-                                    List<TypeName> expectedTypeList) {
+                                    List<TypeMirror> expectedTypeList) {
         List<FormatSpecifier> formatSpecifiers = FluentIterable.from(formatStringList)
                                                                .filter(FormatSpecifier.class)
                                                                .toList();
@@ -79,10 +80,11 @@ class Formatter {
             throw new RuntimeException(name + " cannot not acceptable to " + expectedTypeList);
         }
 
-        Set<List<TypeName>> candidateArgumentTypes =
-                Sets.cartesianProduct(FluentIterable.from(formatSpecifiers)
-                                                    .transform(e -> e.getConversionType().getType())
-                                                    .toList());
+        Set<List<TypeMirror>> candidateArgumentTypes = Sets.cartesianProduct(
+                FluentIterable.from(formatSpecifiers)
+                              .transform(e -> e.getConversionType().getType(processingEnv.getTypeUtils(),
+                                                                            processingEnv.getElementUtils()))
+                              .toList());
 
         if (!candidateArgumentTypes.stream().anyMatch(
                 candidate -> isAssignableArguments(processingEnv, candidate, expectedTypeList))) {
@@ -90,16 +92,12 @@ class Formatter {
         }
     }
 
-    static private TypeMirror getTypeMirror(ProcessingEnvironment processingEnv, TypeName typeName) {
-        return processingEnv.getElementUtils().getTypeElement(typeName.toString()).asType();
-    }
-
-    private boolean isAssignableArguments(ProcessingEnvironment processingEnv, List<TypeName> candidate,
-                                          List<TypeName> expectedTypeList) {
+    private boolean isAssignableArguments(ProcessingEnvironment processingEnv, List<TypeMirror> candidate,
+                                          List<TypeMirror> expectedTypeList) {
         Types typeUtils = processingEnv.getTypeUtils();
         for (int i = 0; i < candidate.size(); i++) {
-            if (!typeUtils.isAssignable(getTypeMirror(processingEnv, expectedTypeList.get(i)),
-                                        getTypeMirror(processingEnv, candidate.get(i)))) {
+            if (!typeUtils.isAssignable(expectedTypeList.get(i),
+                                        candidate.get(i))) {
                 return false;
             }
         }
@@ -108,11 +106,11 @@ class Formatter {
 
     public MethodSpec getMethod(ProcessingEnvironment processingEnv) {
         List<FormatString> formatStringList = FormatParser.parse(format);
-        checkArgumentTypes(processingEnv, formatStringList, argumentTypeNames);
+        checkArgumentTypes(processingEnv, formatStringList, argumentTypes);
         return MethodSpec.methodBuilder(name)
                          .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                         .addParameters(buildParamTypes(argumentTypeNames))
-                         .addCode(buildBody(formatStringList, argumentTypeNames))
+                         .addParameters(buildParamTypes(argumentTypes))
+                         .addCode(buildBody(formatStringList, argumentTypes))
                          .returns(TypeName.get(String.class))
                          .build();
     }
@@ -130,7 +128,7 @@ class Formatter {
         private String name;
         private int bufferCapacity;
         private String format;
-        private ImmutableList<TypeName> argumentTypeNames;
+        private ImmutableList<TypeMirror> argumentTypes;
 
         public Builder name(String name) {
             this.name = name;
@@ -147,13 +145,13 @@ class Formatter {
             return this;
         }
 
-        public Builder argumentTypeNames(ImmutableList<TypeName> argumentTypeNames) {
-            this.argumentTypeNames = argumentTypeNames;
+        public Builder argumentTypeNames(ImmutableList<TypeMirror> argumentTypeNames) {
+            this.argumentTypes = argumentTypeNames;
             return this;
         }
 
         public Formatter build() {
-            return new Formatter(name, format, bufferCapacity, argumentTypeNames);
+            return new Formatter(name, format, bufferCapacity, argumentTypes);
         }
 
     }

@@ -189,9 +189,7 @@ public final class StringFormatterTest {
                          "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
-                         + "import java.lang.Object;\n"
                          + "import java.lang.String;\n"
-                         + "import java.util.Formattable;\n"
                          + "import javax.annotation.Generated;\n"
                          + "import javax.inject.Inject;\n"
                          + "import javax.inject.Named;\n"

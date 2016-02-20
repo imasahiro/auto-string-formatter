@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import javax.lang.model.type.TypeMirror;
+
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.BooleanFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.CharacterFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.FloatFormatConversionType;
@@ -27,7 +29,6 @@ import com.github.imasahiro.stringformatter.processor.FormatConversionType.Strin
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Ints;
 import com.squareup.javapoet.CodeBlock.Builder;
-import com.squareup.javapoet.TypeName;
 
 class FormatSpecifier implements FormatString {
     private final int index;
@@ -53,7 +54,7 @@ class FormatSpecifier implements FormatString {
     }
 
     @Override
-    public void emit(Builder codeBlockBuilder, TypeName argumentType) {
+    public void emit(Builder codeBlockBuilder, TypeMirror argumentType) {
         codeBlockBuilder.add(type.emit("arg" + index, width, precision, flags, argumentType));
     }
 

@@ -15,8 +15,9 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
+import javax.lang.model.type.TypeMirror;
+
 import com.squareup.javapoet.CodeBlock.Builder;
-import com.squareup.javapoet.TypeName;
 
 class FixedString implements FormatString {
     private final String text;
@@ -45,7 +46,7 @@ class FixedString implements FormatString {
     }
 
     @Override
-    public void emit(Builder codeBlockBuilder, TypeName ignored) {
+    public void emit(Builder codeBlockBuilder, TypeMirror ignored) {
         codeBlockBuilder.add("sb.append(\"" + text + "\");\n");
     }
 
