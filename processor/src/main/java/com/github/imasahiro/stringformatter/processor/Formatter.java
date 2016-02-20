@@ -55,19 +55,17 @@ class Formatter {
     }
 
     public TypeSpec getType() {
+        final String processorClassName = StringFormatterProcessor.class.getCanonicalName();
         List<FormatString> formatStringList = FormatParser.parse(format);
         TypeSpec.Builder builder =
                 TypeSpec.classBuilder(name)
-                        .addAnnotation(
-                                AnnotationSpec.builder(Generated.class)
-                                              .addMember("value", "{$S}",
-                                                         StringFormatterProcessor.class.getCanonicalName())
-                                              .build())
-                        .addAnnotation(AnnotationSpec.builder(Named.class).build())
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .addAnnotation(AnnotationSpec.builder(Generated.class)
+                                                     .addMember("value", "{$S}", processorClassName)
+                                                     .build())
+                        .addAnnotation(AnnotationSpec.builder(Named.class).build())
                         .addMethod(MethodSpec.constructorBuilder()
-                                             .addAnnotation(
-                                                     AnnotationSpec.builder(Inject.class).build())
+                                             .addAnnotation(AnnotationSpec.builder(Inject.class).build())
                                              .build());
 
         Sets.cartesianProduct(FluentIterable.from(formatStringList)
