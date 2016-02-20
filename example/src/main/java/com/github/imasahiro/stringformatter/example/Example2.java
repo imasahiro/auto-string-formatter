@@ -7,7 +7,7 @@ public class Example2 {
     @AutoStringFormatter
     interface Formatter {
         @Format("V%d.%02d")
-        String format(int major, int minor);
+        String format(long major, long minor);
     }
 
     public static void main(String... args) {

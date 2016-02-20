@@ -50,7 +50,7 @@ public class Benchmark {
 
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
-            s = Benchmark_Formatter.format(i, i * 2);
+            s = Benchmark_Formatter.format(String.valueOf(i), String.valueOf(i * 2));
         }
         end = System.currentTimeMillis();
         System.out.println("StringFormatter = " + (end - start) + " millisecond");

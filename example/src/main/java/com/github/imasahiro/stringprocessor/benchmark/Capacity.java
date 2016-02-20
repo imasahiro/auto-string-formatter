@@ -23,7 +23,7 @@ public class Capacity {
     private static final String FORMAT = "%32d%32d%32d%32d%32d%32d";
 
     @AutoStringFormatter
-    interface CapacityFormatter {
+    interface Formatter {
         @Format(value = FORMAT, capacity = 32 * 6)
         String format(int a, int b, int c, int d, int e, int g);
     }

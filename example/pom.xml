@@ -24,8 +24,7 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
-          <!-- Workaround for 'java.lang.IllegalStateException:
-     endPosTable already set on repeated mvn compile' //-->
+          <!-- Workaround for 'java.lang.IllegalStateException: endPosTable already set on repeated mvn compile' //-->
           <useIncrementalCompilation>false</useIncrementalCompilation>
         </configuration>
       </plugin>
@@ -37,6 +36,11 @@
       <artifactId>string-formatter-processor</artifactId>
       <version>${project.parent.version}</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>string-formatter-runtime</artifactId>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
