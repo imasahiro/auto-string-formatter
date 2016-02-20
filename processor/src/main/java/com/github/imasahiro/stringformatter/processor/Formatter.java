@@ -18,6 +18,7 @@ package com.github.imasahiro.stringformatter.processor;
 import java.util.List;
 
 import javax.annotation.Generated;
+import javax.inject.Inject;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.inject.Named;
@@ -63,7 +64,11 @@ class Formatter {
                                                          StringFormatterProcessor.class.getCanonicalName())
                                               .build())
                         .addAnnotation(AnnotationSpec.builder(Named.class).build())
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .addMethod(MethodSpec.constructorBuilder()
+                                             .addAnnotation(
+                                                     AnnotationSpec.builder(Inject.class).build())
+                                             .build());
 
         Sets.cartesianProduct(FluentIterable.from(formatStringList)
                                             .filter(FormatSpecifier.class)
