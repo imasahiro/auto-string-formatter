@@ -15,9 +15,7 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.util.Formattable;
-import java.util.FormattableFlags;
-import java.util.Set;
+import java.util.*;
 
 import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.google.common.base.Joiner;
@@ -115,6 +113,7 @@ public abstract class FormatConversionType {
 
     public static class StringFormatConversionType extends FormatConversionType {
         static private final TypeName FORMATTABLE_TYPE = TypeName.get(Formattable.class);
+        static private final TypeName FORMATTER_TYPE = TypeName.get(java.util.Formatter.class);
 
         @Override
         public Set<TypeName> getType() {
@@ -125,7 +124,8 @@ public abstract class FormatConversionType {
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeName argumentType) {
             if (FORMATTABLE_TYPE.equals((argumentType))) {
-                return "%ARG%.formatTo(new java.util.Formatter(%BUFFER%), %flags%, %width%, %precision%);\n"
+                return "%ARG%.formatTo(new %FORMATTER_TYPE%(%BUFFER%), %flags%, %width%, %precision%);\n"
+                        .replace("%FORMATTER_TYPE%", FORMATTER_TYPE.toString())
                         .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
                         .replace("%ARG%", arg)
                         .replace("%flags%", convertToFormattableFlags(flags))

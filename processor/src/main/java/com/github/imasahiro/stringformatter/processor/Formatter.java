@@ -15,7 +15,6 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.annotation.Generated;
