@@ -15,30 +15,33 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.lang.reflect.Type;
 import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Set;
 
+import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.squareup.javapoet.TypeName;
 
 public abstract class FormatConversionType {
-    abstract Set<Type> getType();
+    abstract Set<TypeName> getType();
 
-    public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
+    public String emit(String arg, int width, int precision,
+                       Set<FormatFlag> flags, TypeName argumentType) {
         return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
     }
 
     public static class BooleanFormatConversionType extends FormatConversionType {
         @Override
-        public Set<Type> getType() {
-            return ImmutableSet.of(boolean.class);
+        public Set<TypeName> getType() {
+            return ImmutableSet.of(TypeName.BOOLEAN);
         }
 
         @Override
-        public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeName argumentType) {
             StringBuilder sb = new StringBuilder();
             if (width > "TRUE".length()) {
                 String widthTemplate = "int %ARG%_len = %ARG% ? 4/*true*/ : 5/*false*/;\n" +
@@ -57,26 +60,28 @@ public abstract class FormatConversionType {
 
     public static class CharacterFormatConversionType extends FormatConversionType {
         @Override
-        public Set<Type> getType() {
-            return ImmutableSet.of(char.class);
+        public Set<TypeName> getType() {
+            return ImmutableSet.of(TypeName.CHAR);
         }
 
         @Override
-        public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeName argumentType) {
             return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
         }
     }
 
     public static class IntegerFormatConversionType extends FormatConversionType {
         @Override
-        public Set<Type> getType() {
-            return ImmutableSet.of(short.class, int.class, long.class);
+        public Set<TypeName> getType() {
+            return ImmutableSet.of(TypeName.SHORT, TypeName.INT, TypeName.LONG);
         }
 
-        private final String FORMATTER_NAME = "com.github.imasahiro.stringformatter.runtime.IntegerFormatter";
+        private final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
 
         @Override
-        public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeName argumentType) {
             return FORMATTER_NAME + ".formatTo(%BUFFER%, %ARG%, %flags%, %width%);\n"
                     .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
                     .replace("%ARG%", arg)
@@ -97,25 +102,29 @@ public abstract class FormatConversionType {
 
     public static class FloatFormatConversionType extends FormatConversionType {
         @Override
-        public Set<Type> getType() {
-            return ImmutableSet.of(float.class, double.class);
+        public Set<TypeName> getType() {
+            return ImmutableSet.of(TypeName.FLOAT, TypeName.DOUBLE);
         }
 
         @Override
-        public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeName argumentType) {
             return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
         }
     }
 
     public static class StringFormatConversionType extends FormatConversionType {
+        static private final TypeName FORMATTABLE_TYPE = TypeName.get(Formattable.class);
+
         @Override
-        public Set<Type> getType() {
-            return ImmutableSet.of(Formattable.class, Object.class);
+        public Set<TypeName> getType() {
+            return ImmutableSet.of(FORMATTABLE_TYPE, TypeName.OBJECT);
         }
 
         @Override
-        public String emit(String arg, int width, int precision, Set<FormatFlag> flags, Type argumentType) {
-            if (argumentType == Formattable.class) {
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeName argumentType) {
+            if (FORMATTABLE_TYPE.equals((argumentType))) {
                 return "%ARG%.formatTo(new java.util.Formatter(%BUFFER%), %flags%, %width%, %precision%);\n"
                         .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
                         .replace("%ARG%", arg)

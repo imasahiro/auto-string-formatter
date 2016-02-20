@@ -15,12 +15,11 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.lang.reflect.Type;
-
 import com.squareup.javapoet.CodeBlock.Builder;
+import com.squareup.javapoet.TypeName;
 
 interface FormatString {
     int getIndex();
 
-    void emit(Builder codeBlockBuilder, Type argumentType);
+    void emit(Builder codeBlockBuilder, TypeName argumentType);
 }

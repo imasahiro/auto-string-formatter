@@ -15,7 +15,6 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -28,6 +27,7 @@ import com.github.imasahiro.stringformatter.processor.FormatConversionType.Strin
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Ints;
 import com.squareup.javapoet.CodeBlock.Builder;
+import com.squareup.javapoet.TypeName;
 
 class FormatSpecifier implements FormatString {
     private final int index;
@@ -53,9 +53,8 @@ class FormatSpecifier implements FormatString {
     }
 
     @Override
-    public void emit(Builder codeBlockBuilder, Type argumentType) {
+    public void emit(Builder codeBlockBuilder, TypeName argumentType) {
         codeBlockBuilder.add(type.emit("arg" + index, width, precision, flags, argumentType));
-        //codeBlockBuilder.add("sb.append(arg" + getIndex() + ");\n");
     }
 
     public FormatConversionType getConversionType() {

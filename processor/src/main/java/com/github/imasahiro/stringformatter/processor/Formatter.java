@@ -77,7 +77,7 @@ class Formatter {
         return builder.build();
     }
 
-    private List<ParameterSpec> buildParamTypes(List<Type> argumentTypes) {
+    private List<ParameterSpec> buildParamTypes(List<TypeName> argumentTypes) {
         ImmutableList.Builder<ParameterSpec> builder = ImmutableList.builder();
         for (int i = 0; i < argumentTypes.size(); i++) {
             builder.add(ParameterSpec.builder(argumentTypes.get(i), "arg" + i, Modifier.FINAL).build());
@@ -85,7 +85,7 @@ class Formatter {
         return builder.build();
     }
 
-    private CodeBlock buildBody(List<FormatString> formatStringList, List<Type> argumentTypes) {
+    private CodeBlock buildBody(List<FormatString> formatStringList, List<TypeName> argumentTypes) {
         CodeBlock.Builder builder = CodeBlock.builder()
                                              .add("final StringBuilder sb = new StringBuilder(" +
                                                   bufferCapacity + ");\n");
