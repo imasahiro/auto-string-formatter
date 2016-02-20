@@ -16,72 +16,35 @@
 package com.github.imasahiro.stringformatter.processor;
 
 import java.util.List;
+import java.util.Set;
 
-import javax.annotation.Generated;
-import javax.inject.Inject;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.inject.Named;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 
 class Formatter {
     private final String name;
     private final String format;
     private final int bufferCapacity;
-    private final PackageElement packageElement;
+    private final List<TypeName> argumentTypeNames;
 
-    Formatter(String name, String format, int bufferCapacity, PackageElement packageElement) {
+    Formatter(String name, String format, int bufferCapacity, List<TypeName> argumentTypeNames) {
         this.name = name;
         this.format = format;
         this.bufferCapacity = bufferCapacity;
-        this.packageElement = packageElement;
+        this.argumentTypeNames = argumentTypeNames;
     }
 
-    public String getPackageName() {
-        return packageElement.getQualifiedName().toString();
-    }
-
-    public String getSourceFileName() {
-        return packageElement + "." + name;
-    }
-
-    public TypeSpec getType() {
-        final String processorClassName = StringFormatterProcessor.class.getCanonicalName();
-        List<FormatString> formatStringList = FormatParser.parse(format);
-        TypeSpec.Builder builder =
-                TypeSpec.classBuilder(name)
-                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                        .addAnnotation(AnnotationSpec.builder(Generated.class)
-                                                     .addMember("value", "{$S}", processorClassName)
-                                                     .build())
-                        .addAnnotation(AnnotationSpec.builder(Named.class).build())
-                        .addMethod(MethodSpec.constructorBuilder()
-                                             .addAnnotation(AnnotationSpec.builder(Inject.class).build())
-                                             .build());
-
-        Sets.cartesianProduct(FluentIterable.from(formatStringList)
-                                            .filter(FormatSpecifier.class)
-                                            .transform(e -> e.getConversionType().getType())
-                                            .toList()).forEach(
-                types -> builder.addMethod(MethodSpec.methodBuilder("format")
-                                                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                                                     .addParameters(buildParamTypes(types))
-                                                     .addCode(buildBody(formatStringList, types))
-                                                     .returns(TypeName.get(String.class))
-                                                     .build()));
-        return builder.build();
-    }
-
-    private List<ParameterSpec> buildParamTypes(List<TypeName> argumentTypes) {
+    private static List<ParameterSpec> buildParamTypes(List<TypeName> argumentTypes) {
         ImmutableList.Builder<ParameterSpec> builder = ImmutableList.builder();
         for (int i = 0; i < argumentTypes.size(); i++) {
             builder.add(ParameterSpec.builder(argumentTypes.get(i), "arg" + i, Modifier.FINAL).build());
@@ -106,23 +69,71 @@ class Formatter {
                       .build();
     }
 
+    private void checkArgumentTypes(ProcessingEnvironment processingEnv, List<FormatString> formatStringList,
+                                    List<TypeName> expectedTypeList) {
+        List<FormatSpecifier> formatSpecifiers = FluentIterable.from(formatStringList)
+                                                               .filter(FormatSpecifier.class)
+                                                               .toList();
+
+        if (formatSpecifiers.size() != expectedTypeList.size()) {
+            throw new RuntimeException(name + " cannot not acceptable to " + expectedTypeList);
+        }
+
+        Set<List<TypeName>> candidateArgumentTypes =
+                Sets.cartesianProduct(FluentIterable.from(formatSpecifiers)
+                                                    .transform(e -> e.getConversionType().getType())
+                                                    .toList());
+
+        if (!candidateArgumentTypes.stream().anyMatch(
+                candidate -> isAssignableArguments(processingEnv, candidate, expectedTypeList))) {
+            throw new RuntimeException(name + " cannot not acceptable to " + expectedTypeList);
+        }
+    }
+
+    static private TypeMirror getTypeMirror(ProcessingEnvironment processingEnv, TypeName typeName) {
+        return processingEnv.getElementUtils().getTypeElement(typeName.toString()).asType();
+    }
+
+    private boolean isAssignableArguments(ProcessingEnvironment processingEnv, List<TypeName> candidate,
+                                          List<TypeName> expectedTypeList) {
+        Types typeUtils = processingEnv.getTypeUtils();
+        for (int i = 0; i < candidate.size(); i++) {
+            if (!typeUtils.isAssignable(getTypeMirror(processingEnv, expectedTypeList.get(i)),
+                                        getTypeMirror(processingEnv, candidate.get(i)))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public MethodSpec getMethod(ProcessingEnvironment processingEnv) {
+        List<FormatString> formatStringList = FormatParser.parse(format);
+        checkArgumentTypes(processingEnv, formatStringList, argumentTypeNames);
+        return MethodSpec.methodBuilder(name)
+                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                         .addParameters(buildParamTypes(argumentTypeNames))
+                         .addCode(buildBody(formatStringList, argumentTypeNames))
+                         .returns(TypeName.get(String.class))
+                         .build();
+    }
+
+    @Override
+    public String toString() {
+        return "Formatter(name:" + name + ", format:" + format + ", bufferCapacity:" + bufferCapacity + ")";
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     static class Builder {
         private String name;
-        private PackageElement pkg;
         private int bufferCapacity;
         private String format;
+        private ImmutableList<TypeName> argumentTypeNames;
 
         public Builder name(String name) {
             this.name = name;
-            return this;
-        }
-
-        public Builder pkg(PackageElement pkg) {
-            this.pkg = pkg;
             return this;
         }
 
@@ -135,8 +146,15 @@ class Formatter {
             this.bufferCapacity = bufferCapacity;
             return this;
         }
-        public Formatter build() {
-            return new Formatter(name, format, bufferCapacity, pkg);
+
+        public Builder argumentTypeNames(ImmutableList<TypeName> argumentTypeNames) {
+            this.argumentTypeNames = argumentTypeNames;
+            return this;
         }
+
+        public Formatter build() {
+            return new Formatter(name, format, bufferCapacity, argumentTypeNames);
+        }
+
     }
 }

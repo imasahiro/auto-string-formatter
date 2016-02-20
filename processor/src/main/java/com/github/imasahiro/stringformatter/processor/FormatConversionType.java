@@ -15,7 +15,10 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-import java.util.*;
+import java.lang.reflect.Type;
+import java.util.Formattable;
+import java.util.FormattableFlags;
+import java.util.Set;
 
 import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.google.common.base.Joiner;
@@ -36,6 +39,8 @@ public abstract class FormatConversionType {
         public Set<TypeName> getType() {
             return ImmutableSet.of(TypeName.BOOLEAN);
         }
+
+        Type booleanType = boolean.class;
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
@@ -75,7 +80,7 @@ public abstract class FormatConversionType {
             return ImmutableSet.of(TypeName.SHORT, TypeName.INT, TypeName.LONG);
         }
 
-        private final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
+        private static final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
 
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
@@ -87,7 +92,7 @@ public abstract class FormatConversionType {
                     .replace("%width%", String.valueOf(width));
         }
 
-        private String convertFlags(Set<FormatFlag> flags) {
+        private static String convertFlags(Set<FormatFlag> flags) {
             // TODO Support left-justified.
             if (flags.contains(FormatFlag.ZERO)) {
                 return String.valueOf(

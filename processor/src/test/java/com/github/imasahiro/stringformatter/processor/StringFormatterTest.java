@@ -21,11 +21,12 @@ import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 import org.junit.Test;
 
-import com.github.imasahiro.stringformatter.annotation.StringFormatter;
+import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
+import com.github.imasahiro.stringformatter.annotation.Format;
 import com.google.testing.compile.JavaFileObjects;
 
 /**
- * {@code StringFormatterTest} tests {@link StringFormatter}.
+ * Tests for {@link AutoStringFormatter} and {@link Format}.
  */
 public final class StringFormatterTest {
     @Test
@@ -36,19 +37,21 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(\"%d\")\n"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
-                         + "\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%d\")\n"
+                         + "    String format(int d);\n"
+                         + "  }\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -58,22 +61,12 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
-                         + "  public static String format(final short arg0) {\n"
-                         + "     final StringBuilder sb = new StringBuilder(16);\n"
-                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
-                         + "     return sb.toString();\n"
-                         + "  }\n"
                          + "  public static String format(final int arg0) {\n"
-                         + "     final StringBuilder sb = new StringBuilder(16);\n"
-                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
-                         + "     return sb.toString();\n"
-                         + "  }\n"
-                         + "  public static String format(final long arg0) {\n"
                          + "     final StringBuilder sb = new StringBuilder(16);\n"
                          + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
                          + "     return sb.toString();\n"
@@ -89,19 +82,21 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(\"%b\")\n"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
-                         + "\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%b\")\n"
+                         + "    String format(boolean b);\n"
+                         + "  }\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -111,9 +106,9 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
                          + "  public static String format(final boolean arg0) {\n"
@@ -132,19 +127,21 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(\"%B\")\n"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
-                         + "\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%B\")\n"
+                         + "    String format(boolean b);\n"
+                         + "  }\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -154,9 +151,9 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
                          + "  public static String format(final boolean arg0) {\n"
@@ -175,19 +172,21 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(\"%s\")\n"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
-                         + "\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%s\")\n"
+                         + "    String format(int d);\n"
+                         + "  }\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.Object;\n"
@@ -199,17 +198,12 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
-                         + "  public static String format(final Formattable arg0) {\n"
-                         + "     final StringBuilder sb = new StringBuilder(16);\n"
-                         + "     arg0.formatTo(new java.util.Formatter(sb), 0, -1, -1);\n"
-                         + "     return sb.toString();\n"
-                         + "  }\n"
-                         + "  public static String format(final Object arg0) {\n"
+                         + "  public static String format(final int arg0) {\n"
                          + "     final StringBuilder sb = new StringBuilder(16);\n"
                          + "     sb.append(String.valueOf(arg0));\n"
                          + "     return sb.toString();\n"
@@ -225,19 +219,22 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(\"AA%%AA\")"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
+                         + "  @AutoStringFormatter"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"AA%%AA\")\n"
+                         + "    String format();\n"
+                         + "  }\n"
                          + "\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -247,9 +244,9 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
                          + "  public static String format() {\n"
@@ -270,19 +267,22 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter(value = \"%%\", capacity = 128)"
-                         + "    @Qualifier\n"
-                         + "    @interface Formatter {}\n"
+                         + "  @AutoStringFormatter"
+                         + "  interface Formatter {\n"
+                         + "    @Format(value = \"%%\", capacity = 128)\n"
+                         + "    String format();\n"
+                         + "  }\n"
                          + "\n"
                          + "}\n"))
                  .processedWith(new StringFormatterProcessor())
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -291,12 +291,11 @@ public final class StringFormatterTest {
                          + "import javax.inject.Named;\n"
                          + "\n"
                          +
-                         "@Generated({\"com.github.imasahiro.stringformatter.processor" +
-                         ".StringFormatterProcessor\"})\n"
+                         "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
                          + "  public static String format() {\n"
@@ -314,10 +313,11 @@ public final class StringFormatterTest {
                          "package foo.bar;\n"
                          + "\n"
                          + "import javax.inject.Qualifier;\n"
-                         + "import com.github.imasahiro.stringformatter.annotation.StringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
                          + "\n"
                          + "public class Baz {\n"
-                         + "    @StringFormatter("
+                         + "    @AutoStringFormatter("
                          + "    \"Hi %s, my name is %s %s and I am %d years old.\" +"
                          + "    \"My body body fat percentage is %f%%.\")"
                          + "    @Qualifier\n"
@@ -328,7 +328,7 @@ public final class StringFormatterTest {
                  .compilesWithoutError()
                  .and()
                  .generatesSources(JavaFileObjects.forSourceString(
-                         "foo.bar.StringFormatter_Formatter",
+                         "foo.bar.Baz_Formatter",
                          "package foo.bar;\n"
                          + "\n"
                          + "import java.lang.String;\n"
@@ -338,9 +338,9 @@ public final class StringFormatterTest {
                          + "\n"
                          + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
                          + "@Named\n"
-                         + "public final class StringFormatter_Formatter {\n"
+                         + "public final class Baz_Formatter {\n"
                          + "  @Inject\n"
-                         + "  StringFormatter_Formatter() {\n"
+                         + "  Baz_Formatter() {\n"
                          + "  }\n"
                          + "\n"
                          + "  public static String format(final short arg0) {\n"
@@ -356,6 +356,53 @@ public final class StringFormatterTest {
                          + "  public static String format(final long arg0) {\n"
                          + "     final StringBuilder sb = new StringBuilder(16);\n"
                          + "     sb.append(arg0);\n"
+                         + "     return sb.toString();\n"
+                         + "  }\n"
+                         + "}"));
+    }
+
+    @Test
+    public void testProcess() throws Exception {
+        assert_().about(javaSource())
+                 .that(JavaFileObjects.forSourceString(
+                         "foo.bar.Baz",
+                         "package foo.bar;\n"
+                         + "\n"
+                         + "import javax.inject.Qualifier;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
+                         + "\n"
+                         + "public class Baz {\n"
+                         + "    @AutoStringFormatter\n"
+                         + "    interface Formatter {\n"
+                         + "        @Format(\"%02d:%02d\")\n"
+                         + "        String formatTime(int hours, int minutes);\n"
+                         + "    }\n"
+                         + "}\n"))
+                 .processedWith(new StringFormatterProcessor())
+                 .compilesWithoutError()
+                 .and()
+                 .generatesSources(JavaFileObjects.forSourceString(
+                         "foo.bar.Baz_Formatter",
+                         "package foo.bar;\n"
+                         + "\n"
+                         + "import java.lang.String;\n"
+                         + "import javax.annotation.Generated;\n"
+                         + "import javax.inject.Inject;\n"
+                         + "import javax.inject.Named;\n"
+                         + "\n"
+                         + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
+                         + "@Named\n"
+                         + "public final class Baz_Formatter {\n"
+                         + "  @Inject\n"
+                         + "  Baz_Formatter() {\n"
+                         + "  }\n"
+                         + "\n"
+                         + "  public static String formatTime(final int arg0, final int arg1) {\n"
+                         + "     final StringBuilder sb = new StringBuilder(16);\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg0, 1, 2);\n"
+                         + "     sb.append(\":\");\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg1, 1, 2);\n"
                          + "     return sb.toString();\n"
                          + "  }\n"
                          + "}"));

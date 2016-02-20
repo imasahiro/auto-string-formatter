@@ -2,14 +2,17 @@ package com.github.imasahiro.stringformatter.example;
 
 import javax.inject.Qualifier;
 
-import com.github.imasahiro.stringformatter.annotation.StringFormatter;
+import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
+import com.github.imasahiro.stringformatter.annotation.Format;
 
 public class Example {
-    @StringFormatter(value = "Hi %s, my name is %s.")
-    @Qualifier
-    @interface Formatter {}
+    @AutoStringFormatter
+    interface Formatter {
+        @Format("Hi %s, my name is %s.")
+        String formatTo(String myName, String frientName);
+    }
 
     public static void main(String... args) {
-        System.out.println(StringFormatter_Formatter.format("Alice", "Bob"));
+        System.out.println(Example_Formatter.formatTo("Alice", "Bob"));
     }
 }

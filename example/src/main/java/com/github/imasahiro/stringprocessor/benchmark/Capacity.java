@@ -16,16 +16,17 @@
 
 package com.github.imasahiro.stringprocessor.benchmark;
 
-import javax.inject.Qualifier;
-
-import com.github.imasahiro.stringformatter.annotation.StringFormatter;
+import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
+import com.github.imasahiro.stringformatter.annotation.Format;
 
 public class Capacity {
     private static final String FORMAT = "%32d%32d%32d%32d%32d%32d";
 
-    @StringFormatter(value = FORMAT, capacity = 32 * 6)
-    @Qualifier
-    @interface CapacityFormatter {}
+    @AutoStringFormatter
+    interface CapacityFormatter {
+        @Format(value = FORMAT, capacity = 32 * 6)
+        String format(int a, int b, int c, int d, int e);
+    }
 
     public static void main(String... args) {
         for (int i = 0; i < 100; i++) {
@@ -65,7 +66,7 @@ public class Capacity {
 
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
-            s = StringFormatter_CapacityFormatter.format(i, i, i, i, i, i);
+            s = Capacity_Formatter.format(i, i, i, i, i, i);
         }
         end = System.currentTimeMillis();
         System.out.println("StringFormatter = " + (end - start) + " millisecond");

@@ -1,15 +1,16 @@
 package com.github.imasahiro.stringprocessor.benchmark;
 
-import javax.inject.Qualifier;
-
-import com.github.imasahiro.stringformatter.annotation.StringFormatter;
+import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
+import com.github.imasahiro.stringformatter.annotation.Format;
 
 public class Benchmark {
     private static final String FORMAT = "Hi %s; Hi to you %s";
 
-    @StringFormatter(FORMAT)
-    @Qualifier
-    @interface Formatter {}
+    @AutoStringFormatter
+    interface Formatter {
+        @Format(FORMAT)
+        String format(String thisName, String otherName);
+    }
 
     public static void main(String... args) {
         for (int i = 0; i < 100; i++) {
@@ -49,7 +50,7 @@ public class Benchmark {
 
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
-            s = StringFormatter_Formatter.format(i, i * 2);
+            s = Benchmark_Formatter.format(i, i * 2);
         }
         end = System.currentTimeMillis();
         System.out.println("StringFormatter = " + (end - start) + " millisecond");
