@@ -20,6 +20,7 @@ import java.util.List;
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
+import javax.inject.Named;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -61,6 +62,7 @@ class Formatter {
                                               .addMember("value", "{$S}",
                                                          StringFormatterProcessor.class.getCanonicalName())
                                               .build())
+                        .addAnnotation(AnnotationSpec.builder(Named.class).build())
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
         Sets.cartesianProduct(FluentIterable.from(formatStringList)

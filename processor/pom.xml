@@ -55,6 +55,11 @@
       <artifactId>metainf-services</artifactId>
       <version>1.6</version>
     </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
 
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -78,13 +83,6 @@
       <groupId>com.google.testing.compile</groupId>
       <artifactId>compile-testing</artifactId>
       <version>0.6</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <version>1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
