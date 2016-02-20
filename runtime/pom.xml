@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.github.imasahiro</groupId>
     <artifactId>string-formatter</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>string-formatter-runtime</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2-SNAPSHOT</version>
 
   <dependencies>
     <dependency>

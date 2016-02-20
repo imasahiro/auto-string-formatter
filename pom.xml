@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.imasahiro</groupId>
   <artifactId>string-formatter</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -26,6 +26,13 @@
     </license>
   </licenses>
 
+  <scm>
+    <url>${project.url}</url>
+    <connection>scm:git:https://github.com/imasahiro/string-formatter.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/imasahiro/string-formatter.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -38,6 +45,28 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.4.2</version>
+          <configuration>
+            <useReleaseProfile>false</useReleaseProfile>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <allowTimestampedSnapshots>false</allowTimestampedSnapshots>
+            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-api</artifactId>
+              <version>1.8.1</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>1.8.1</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
