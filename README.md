@@ -10,7 +10,7 @@
 `string-formatter` requires JDK 8 (1.8.0_65 or later) to run annotation processors.
 
 ## Synopsis
-Just define a format with `@StringFormatter` and `@Qualifier`, and use it.
+Just define a format with `@AutoStringFormatter` and `@Format`, and use it.
 
 ```java
 package com.github.imasahiro.stringformatter.example;
