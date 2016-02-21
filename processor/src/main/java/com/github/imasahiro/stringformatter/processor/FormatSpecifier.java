@@ -24,6 +24,7 @@ import javax.lang.model.type.TypeMirror;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.BooleanFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.CharacterFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.FloatFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.FormatConversionType.HexIntegerFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.IntegerFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.FormatConversionType.StringFormatConversionType;
 import com.google.common.base.Joiner;
@@ -110,10 +111,13 @@ class FormatSpecifier implements FormatString {
             break;
         case 'd':
         case 'o':
+            checkArgument(precision >= 0, "precision is not applicable for integer conversion.");
+            type = new IntegerFormatConversionType();
+            break;
         case 'x':
         case 'X':
             checkArgument(precision >= 0, "precision is not applicable for integer conversion.");
-            type = new IntegerFormatConversionType();
+            type = new HexIntegerFormatConversionType();
             break;
         case 'e':
         case 'E':

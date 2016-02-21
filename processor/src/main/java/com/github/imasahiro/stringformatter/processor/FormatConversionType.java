@@ -26,6 +26,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import com.github.imasahiro.stringformatter.runtime.HexIntegerFormatter;
 import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
@@ -120,7 +121,38 @@ public abstract class FormatConversionType {
             }
             return "0";
         }
+    }
 
+    public static class HexIntegerFormatConversionType extends IntegerFormatConversionType {
+        private static final String FORMATTER_NAME = HexIntegerFormatter.class.getCanonicalName();
+
+        private static final Mustache TEMPLATE =
+                new DefaultMustacheFactory().compile("template/int.mustache");
+
+        @Override
+        public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
+            return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.SHORT),
+                                   typeUtil.getPrimitiveType(TypeKind.INT),
+                                   typeUtil.getPrimitiveType(TypeKind.LONG));
+        }
+
+        @Override
+        public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
+                           TypeMirror argumentType) {
+            return getCode(TEMPLATE, ImmutableMap.of("FORMATTER_NAME", FORMATTER_NAME,
+                                                     "ARG", arg,
+                                                     "flags", convertFlags(flags),
+                                                     "width", String.valueOf(width)));
+        }
+
+        private static String convertFlags(Set<FormatFlag> flags) {
+            // TODO Support left-justified.
+            if (flags.contains(FormatFlag.ZERO)) {
+                return String.valueOf(
+                        IntegerFormatter.PADDED_WITH_ZEROS);
+            }
+            return "0";
+        }
     }
 
     public static class FloatFormatConversionType extends FormatConversionType {

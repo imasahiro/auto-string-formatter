@@ -75,6 +75,51 @@ public final class StringFormatterTest {
     }
 
     @Test
+    public void testProcess_hex_integer() throws Exception {
+        assert_().about(javaSource())
+                 .that(JavaFileObjects.forSourceString(
+                         "foo.bar.Baz",
+                         "package foo.bar;\n"
+                         + "\n"
+                         + "import javax.inject.Qualifier;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
+                         + "\n"
+                         + "public class Baz {\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%x\")\n"
+                         + "    String format(int d);\n"
+                         + "  }\n"
+                         + "}\n"))
+                 .processedWith(new StringFormatterProcessor())
+                 .compilesWithoutError()
+                 .and()
+                 .generatesSources(JavaFileObjects.forSourceString(
+                         "foo.bar.Baz_Formatter",
+                         "package foo.bar;\n"
+                         + "\n"
+                         + "import java.lang.String;\n"
+                         + "import javax.annotation.Generated;\n"
+                         + "import javax.inject.Inject;\n"
+                         + "import javax.inject.Named;\n"
+                         + "\n"
+                         + "@Generated({\"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor\"})\n"
+                         + "@Named\n"
+                         + "public final class Baz_Formatter {\n"
+                         + "  @Inject\n"
+                         + "  Baz_Formatter() {\n"
+                         + "  }\n"
+                         + "\n"
+                         + "  public static String format(final int arg0) {\n"
+                         + "     final StringBuilder sb = new StringBuilder(16);\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.HexIntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
+                         + "     return sb.toString();\n"
+                         + "  }\n"
+                         + "}"));
+    }
+
+    @Test
     public void testProcess_boolean_lowerCase() throws Exception {
         assert_().about(javaSource())
                  .that(JavaFileObjects.forSourceString(
