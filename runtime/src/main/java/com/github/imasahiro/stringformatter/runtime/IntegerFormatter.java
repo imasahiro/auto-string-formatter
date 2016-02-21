@@ -15,8 +15,6 @@
  */
 package com.github.imasahiro.stringformatter.runtime;
 
-import com.google.common.annotations.VisibleForTesting;
-
 public class IntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
 
@@ -35,47 +33,6 @@ public class IntegerFormatter {
         return format0(sb, unsigned, v < 0, flags, width);
     }
 
-    private static final long[] powersOf10 = {
-            1L,
-            10L,
-            100L,
-            1000L,
-            10000L,
-            100000L,
-            1000000L,
-            10000000L,
-            100000000L,
-            1000000000L,
-            10000000000L,
-            100000000000L,
-            1000000000000L,
-            10000000000000L,
-            100000000000000L,
-            1000000000000000L,
-            10000000000000000L,
-            100000000000000000L,
-            1000000000000000000L,
-            Long.MAX_VALUE
-    };
-
-    // Copied from com.google.common.math.LongMath
-    // maxLog10ForLeadingZeros[i] == floor(log10(2^(Long.SIZE - i)))
-    private static final byte[] maxLog10ForLeadingZeros = {
-            19, 18, 18, 18, 18, 17, 17, 17, 16, 16, 16, 15, 15, 15, 15, 14, 14, 14, 13, 13, 13, 12, 12,
-            12, 12, 11, 11, 11, 10, 10, 10, 9, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 4, 4, 4,
-            3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0
-    };
-
-    @VisibleForTesting
-    static int log10(long unsigned) {
-        if (unsigned != 0) {
-            int digits = maxLog10ForLeadingZeros[Long.numberOfLeadingZeros(unsigned)];
-            return digits + (unsigned >= powersOf10[digits] ? 1 : 0);
-        } else {
-            return 1;
-        }
-    }
-
     private static final char[] digits99 = {
             '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', '0', '5', '0', '6', '0', '7', '0', '8', '0', '9',
             '1', '0', '1', '1', '1', '2', '1', '3', '1', '4', '1', '5', '1', '6', '1', '7', '1', '8', '1', '9',
@@ -90,7 +47,7 @@ public class IntegerFormatter {
     };
 
     private static StringBuilder format0(StringBuilder sb, long val, boolean negative, int flags, int width) {
-        int len = log10(val) + (negative ? 1 : 0);
+        int len = IntegerUtils.log10(val) + (negative ? 1 : 0);
         if ((flags & PADDED_WITH_ZEROS) != PADDED_WITH_ZEROS) {
             for (int i = len; i < width; i++) {
                 sb.append(' ');

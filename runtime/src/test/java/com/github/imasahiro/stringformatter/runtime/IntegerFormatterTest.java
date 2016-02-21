@@ -5,32 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class IntegerFormatterTest {
-    @Test
-    public void testLog2() {
-        assertEquals(1, IntegerFormatter.log10(1));
-        assertEquals(1, IntegerFormatter.log10(9));
-
-        assertEquals(2, IntegerFormatter.log10(10));
-        assertEquals(2, IntegerFormatter.log10(11));
-        assertEquals(2, IntegerFormatter.log10(99));
-
-        assertEquals(3, IntegerFormatter.log10(100));
-        assertEquals(3, IntegerFormatter.log10(500));
-        assertEquals(3, IntegerFormatter.log10(999));
-
-        assertEquals(4, IntegerFormatter.log10(1000));
-        assertEquals(4, IntegerFormatter.log10(5000));
-        assertEquals(4, IntegerFormatter.log10(9999));
-
-        assertEquals(5, IntegerFormatter.log10(10000));
-        assertEquals(5, IntegerFormatter.log10(50000));
-        assertEquals(5, IntegerFormatter.log10(99999));
-
-        assertEquals(19, IntegerFormatter.log10(1000000000000000000L));
-        assertEquals(19, IntegerFormatter.log10(5555555555555555555L));
-        assertEquals(19, IntegerFormatter.log10(Long.MAX_VALUE));
-    }
-
     private String run(long i, int width, boolean printZero) {
         StringBuilder sb = new StringBuilder();
         IntegerFormatter.formatTo(sb, i, printZero ? IntegerFormatter.PADDED_WITH_ZEROS : 0, width);
