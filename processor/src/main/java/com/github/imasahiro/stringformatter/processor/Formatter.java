@@ -108,7 +108,7 @@ class Formatter {
         List<FormatString> formatStringList = FormatParser.parse(format);
         checkArgumentTypes(processingEnv, formatStringList, argumentTypes);
         return MethodSpec.methodBuilder(name)
-                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .addParameters(buildParamTypes(argumentTypes))
                          .addCode(buildBody(formatStringList, argumentTypes))
                          .returns(TypeName.get(String.class))

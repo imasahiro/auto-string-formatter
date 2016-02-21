@@ -68,7 +68,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
                     String packageName = packageElement.getQualifiedName().toString();
                     String sourceName = packageElement + "." + className;
 
-                    JavaFile javaFile = JavaFile.builder(packageName, buildClass(className, formatterList))
+                    JavaFile javaFile = JavaFile.builder(packageName, buildClass(typeElement, className,
+                                                                                 formatterList))
                                                 .build();
                     try (Writer writer = processingEnv.getFiler()
                                                       .createSourceFile(sourceName)
@@ -81,9 +82,10 @@ public class StringFormatterProcessor extends AbstractProcessor {
         return true;
     }
 
-    private TypeSpec buildClass(String className, List<Formatter> formatterList) {
+    private TypeSpec buildClass(TypeElement superInterface, String className, List<Formatter> formatterList) {
         TypeSpec.Builder builder =
                 TypeSpec.classBuilder(className)
+                        .addSuperinterface(TypeName.get(superInterface.asType()))
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addAnnotation(AnnotationSpec.builder(Generated.class)
                                                      .addMember("value", "{$S}", getClass().getCanonicalName())

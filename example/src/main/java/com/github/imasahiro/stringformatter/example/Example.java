@@ -11,6 +11,6 @@ public class Example {
     }
 
     public static void main(String... args) {
-        System.out.println(Example_Formatter.formatTo("Alice", "Bob"));
+        System.out.println(new Example_Formatter().formatTo("Alice", "Bob"));
     }
 }

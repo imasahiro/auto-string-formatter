@@ -29,6 +29,6 @@ public class FormatHexId {
     public static void main(String... args) {
         long upperId = 0x0123456789abcdefL;
         long lowerId = 0x0123456789abcdefL;
-        System.out.println(FormatHexId_Formatter.formatTo(upperId, lowerId));
+        System.out.println(new FormatHexId_Formatter().formatTo(upperId, lowerId));
     }
 }

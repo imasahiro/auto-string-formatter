@@ -66,7 +66,7 @@ public class Capacity {
 
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
-            s = Capacity_Formatter.format(i, i, i, i, i, i);
+            s = new Capacity_Formatter().format(i, i, i, i, i, i);
         }
         end = System.currentTimeMillis();
         System.out.println("StringFormatter = " + (end - start) + " millisecond");

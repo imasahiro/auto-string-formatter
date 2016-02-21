@@ -14,6 +14,6 @@ public class Example2 {
         long version = 10;
         long mainVersion = (version - 1) / 100 + 1;
         long minorVersion = (version - 1) % 100;
-        System.out.println(Example2_Formatter.format(mainVersion, minorVersion));
+        System.out.println(new Example2_Formatter().format(mainVersion, minorVersion));
     }
 }
