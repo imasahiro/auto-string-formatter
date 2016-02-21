@@ -15,7 +15,7 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
-enum FormatFlag {
+public enum FormatFlag {
     SHARP,
     SPACE,
     ZERO,

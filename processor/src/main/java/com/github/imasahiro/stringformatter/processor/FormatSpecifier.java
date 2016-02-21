@@ -21,12 +21,13 @@ import java.util.regex.Matcher;
 
 import javax.lang.model.type.TypeMirror;
 
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.BooleanFormatConversionType;
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.CharacterFormatConversionType;
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.FloatFormatConversionType;
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.HexIntegerFormatConversionType;
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.IntegerFormatConversionType;
-import com.github.imasahiro.stringformatter.processor.FormatConversionType.StringFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.FormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.CharacterFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.FloatFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.HexIntegerFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.IntegerFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.StringFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.specifier.BooleanFormatConversionType;
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Ints;
 import com.squareup.javapoet.CodeBlock.Builder;
