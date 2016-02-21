@@ -4,12 +4,12 @@
   <parent>
     <groupId>com.github.imasahiro</groupId>
     <artifactId>string-formatter</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.1</version>
   </parent>
 
   <!-- project coordinates -->
   <artifactId>string-formatter-processor</artifactId>
-  <version>0.3.1-SNAPSHOT</version>
+  <version>0.3.1</version>
 
   <build>
     <plugins>
