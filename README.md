@@ -13,19 +13,20 @@
 Just define a format with `@StringFormatter` and `@Qualifier`, and use it.
 
 ```java
-package com.github.imasahiro.stringprocessor.benchmark;
+package com.github.imasahiro.stringformatter.example;
 
-import javax.inject.Qualifier;
+import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
+import com.github.imasahiro.stringformatter.annotation.Format;
 
-import com.github.imasahiro.stringformatter.annotation.StringFormatter;
-
-public class HelloWorld {
-    @StringFormatter(value = "Hi %s, my name is %s.")
-    @Qualifier
-    @interface Formatter {}
+public class Example {
+    @AutoStringFormatter
+    interface Formatter {
+        @Format("Hi %s, my name is %s.")
+            String formatTo(String myName, String frientName);
+    }
 
     public static void main(String... args) {
-        System.out.println(StringFormatter_Formatter.format("Alice", "Bob"));
+        System.out.println(new Example_Formatter().formatTo("Alice", "Bob"));
     }
 }
 ```
@@ -35,51 +36,26 @@ Then the annotation processor generate following java code based on StringFormat
 ```java
 package com.github.imasahiro.stringformatter.example;
 
-import java.lang.Object;
 import java.lang.String;
-import java.util.Formattable;
 import javax.annotation.Generated;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Generated({"com.github.imasahiro.stringformatter.processor.StringFormatterProcessor"})
-public final class StringFormatter_Formatter {
-  public static String format(final Formattable arg0, final Formattable arg1) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("Hi ");
-    arg0.formatTo(new java.util.Formatter(sb), 0, -1, -1);
-    sb.append(", my name is ");
-    arg1.formatTo(new java.util.Formatter(sb), 0, -1, -1);
-    sb.append(".");
-    return sb.toString();
-  }
+@Named
+public final class Example_Formatter implements Example.Formatter {
+    @Inject
+    Example_Formatter() {
+    }
 
-  public static String format(final Formattable arg0, final Object arg1) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("Hi ");
-    arg0.formatTo(new java.util.Formatter(sb), 0, -1, -1);
-    sb.append(", my name is ");
-    sb.append(String.valueOf(arg1));
-    sb.append(".");
-    return sb.toString();
-  }
-
-  public static String format(final Object arg0, final Formattable arg1) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("Hi ");
-    sb.append(String.valueOf(arg0));
-    sb.append(", my name is ");
-    arg1.formatTo(new java.util.Formatter(sb), 0, -1, -1);
-    sb.append(".");
-    return sb.toString();
-  }
-
-  public static String format(final Object arg0, final Object arg1) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("Hi ");
-    sb.append(String.valueOf(arg0));
-    sb.append(", my name is ");
-    sb.append(String.valueOf(arg1));
-    sb.append(".");
-    return sb.toString();
-  }
+    public final String formatTo(final String arg0, final String arg1) {
+        final StringBuilder sb = new StringBuilder(16);
+        sb.append("Hi ");
+        sb.append(String.valueOf(arg0));
+        sb.append(", my name is ");
+        sb.append(String.valueOf(arg1));
+        sb.append(".");
+        return sb.toString();
+    }
 }
 ```
