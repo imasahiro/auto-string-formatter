@@ -37,8 +37,6 @@ class FormatSpecifier implements FormatString {
     private final Set<FormatFlag> flags;
     private final FormatConversionType type;
 
-    static final String STRING_BUILDER_NAME = "sb";
-
     private FormatSpecifier(int index, int width, int precision, Set<FormatFlag> flags,
                             FormatConversionType type) {
         this.index = index;

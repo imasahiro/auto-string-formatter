@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FormatParser {
-    // %[flags][width][.precision][t]conversion
+    // %[index][flags][width][.precision][t]conversion
     private static final String FORMAT_SPECIFIER =
             "%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])";
 

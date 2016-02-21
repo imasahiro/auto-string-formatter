@@ -15,8 +15,10 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
+import java.io.StringWriter;
 import java.util.Formattable;
 import java.util.FormattableFlags;
+import java.util.Map;
 import java.util.Set;
 
 import javax.lang.model.type.TypeKind;
@@ -25,8 +27,11 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.squareup.javapoet.TypeName;
 
@@ -35,10 +40,21 @@ public abstract class FormatConversionType {
 
     public String emit(String arg, int width, int precision,
                        Set<FormatFlag> flags, TypeMirror argumentType) {
-        return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
+        return "sb.append(" + arg + ");\n";
+    }
+
+    private static String getCode(Mustache template, Map<String, ?> scope) {
+        StringWriter sw = new StringWriter();
+        template.execute(sw, scope);
+        return sw.toString();
     }
 
     public static class BooleanFormatConversionType extends FormatConversionType {
+        private static final Mustache BOOLEAN_TEMPLATE =
+                new DefaultMustacheFactory().compile("template/boolean.mustache");
+        private static final Mustache BOOLEAN_TEMPLATE_WITH_WIDTH =
+                new DefaultMustacheFactory().compile("template/boolean_with_width.mustache");
+
         @Override
         public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
             return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.BOOLEAN));
@@ -47,19 +63,17 @@ public abstract class FormatConversionType {
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeMirror argumentType) {
-            StringBuilder sb = new StringBuilder();
-            if (width > "TRUE".length()) {
-                String widthTemplate = "int %ARG%_len = %ARG% ? 4/*true*/ : 5/*false*/;\n" +
-                                       "padding(%width% - %ARG%_len);\n";
-                sb.append(widthTemplate.replace("%width%", String.valueOf(width)));
+            ImmutableMap.Builder<String, Object> scopeBuilder = ImmutableMap.builder();
+            scopeBuilder.put("ARG", arg)
+                        .put("width", width)
+                        .put("TRUE", flags.contains(FormatFlag.UPPER_CASE) ? "TRUE" : "true")
+                        .put("FALSE", flags.contains(FormatFlag.UPPER_CASE) ? "FALSE" : "false");
+            if (width > Boolean.TRUE.toString().length()) {
+                return getCode(BOOLEAN_TEMPLATE_WITH_WIDTH, scopeBuilder.build());
             }
-            String template = FormatSpecifier.STRING_BUILDER_NAME + ".append(%ARG% ? \"true\" : \"false\");\n";
-            if (flags.contains(FormatFlag.UPPER_CASE)) {
-                template = template.replace("true", "TRUE")
-                                   .replace("false", "FALSE");
+            else {
+                return getCode(BOOLEAN_TEMPLATE, scopeBuilder.build());
             }
-            sb.append(template.replace("%ARG%", arg));
-            return sb.toString();
         }
     }
 
@@ -72,11 +86,16 @@ public abstract class FormatConversionType {
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeMirror argumentType) {
-            return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
+            return "sb.append(" + arg + ");\n";
         }
     }
 
     public static class IntegerFormatConversionType extends FormatConversionType {
+        private static final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
+
+        private static final Mustache TEMPLATE =
+                new DefaultMustacheFactory().compile("template/int.mustache");
+
         @Override
         public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
             return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.SHORT),
@@ -84,16 +103,13 @@ public abstract class FormatConversionType {
                                    typeUtil.getPrimitiveType(TypeKind.LONG));
         }
 
-        private static final String FORMATTER_NAME = IntegerFormatter.class.getCanonicalName();
-
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeMirror argumentType) {
-            return FORMATTER_NAME + ".formatTo(%BUFFER%, %ARG%, %flags%, %width%);\n"
-                    .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
-                    .replace("%ARG%", arg)
-                    .replace("%flags%", convertFlags(flags))
-                    .replace("%width%", String.valueOf(width));
+            return getCode(TEMPLATE, ImmutableMap.of("FORMATTER_NAME", FORMATTER_NAME,
+                                                     "ARG", arg,
+                                                     "flags", convertFlags(flags),
+                                                     "width", String.valueOf(width)));
         }
 
         private static String convertFlags(Set<FormatFlag> flags) {
@@ -117,13 +133,18 @@ public abstract class FormatConversionType {
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeMirror argumentType) {
-            return FormatSpecifier.STRING_BUILDER_NAME + ".append(" + arg + ");\n";
+            return "sb.append(" + arg + ");\n";
         }
     }
 
     public static class StringFormatConversionType extends FormatConversionType {
         private static final TypeName FORMATTABLE_TYPE = TypeName.get(Formattable.class);
         private static final TypeName FORMATTER_TYPE = TypeName.get(java.util.Formatter.class);
+
+        private static final Mustache STRING_TEMPLATE =
+                new DefaultMustacheFactory().compile("template/string.mustache");
+        private static final Mustache FORMATTABLE_TEMPLATE =
+                new DefaultMustacheFactory().compile("template/formattable.mustache");
 
         @Override
         public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
@@ -134,22 +155,20 @@ public abstract class FormatConversionType {
         @Override
         public String emit(String arg, int width, int precision, Set<FormatFlag> flags,
                            TypeMirror argumentType) {
+            Map<String, ?> scope = ImmutableMap.of("FORMATTER_NAME", FORMATTER_TYPE.toString(),
+                                                   "ARG", arg,
+                                                   "flags", convertToFormattableFlags(flags),
+                                                   "width", String.valueOf(width),
+                                                   "%precision%", String.valueOf(precision));
+
             if (FORMATTABLE_TYPE.equals(TypeName.get(argumentType))) {
-                return "%ARG%.formatTo(new %FORMATTER_TYPE%(%BUFFER%), %flags%, %width%, %precision%);\n"
-                        .replace("%FORMATTER_TYPE%", FORMATTER_TYPE.toString())
-                        .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
-                        .replace("%ARG%", arg)
-                        .replace("%flags%", convertToFormattableFlags(flags))
-                        .replace("%width%", String.valueOf(width))
-                        .replace("%precision%", String.valueOf(precision));
+                return getCode(FORMATTABLE_TEMPLATE, scope);
             } else {
-                return "%BUFFER%.append(String.valueOf(%ARG%));\n"
-                        .replace("%BUFFER%", FormatSpecifier.STRING_BUILDER_NAME)
-                        .replace("%ARG%", arg);
+                return getCode(STRING_TEMPLATE, scope);
             }
         }
 
-        private String convertToFormattableFlags(Set<FormatFlag> flags) {
+        private static String convertToFormattableFlags(Set<FormatFlag> flags) {
             ImmutableList.Builder<Integer> flagBuilder = ImmutableList.builder();
             if (flags.contains(FormatFlag.UPPER_CASE)) {
                 flagBuilder.add(FormattableFlags.UPPERCASE);

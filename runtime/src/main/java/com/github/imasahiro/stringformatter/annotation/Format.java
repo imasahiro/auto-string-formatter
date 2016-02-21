@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ METHOD })
+@Target(METHOD)
 @Retention(RetentionPolicy.SOURCE)
 public @interface Format {
     // format string.

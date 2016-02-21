@@ -1,7 +1,5 @@
 package com.github.imasahiro.stringformatter.example;
 
-import javax.inject.Qualifier;
-
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
