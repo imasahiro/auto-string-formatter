@@ -25,7 +25,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -43,7 +42,6 @@ import com.google.auto.common.MoreElements;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -90,10 +88,7 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .addAnnotation(AnnotationSpec.builder(Generated.class)
                                                      .addMember("value", "{$S}", getClass().getCanonicalName())
                                                      .build())
-                        .addAnnotation(AnnotationSpec.builder(Named.class).build())
-                        .addMethod(MethodSpec.constructorBuilder()
-                                             .addAnnotation(AnnotationSpec.builder(Inject.class).build())
-                                             .build());
+                        .addAnnotation(AnnotationSpec.builder(Named.class).build());
         formatterList.forEach(formatter -> builder.addMethod(formatter.getMethod(processingEnv)));
         return builder.build();
     }
