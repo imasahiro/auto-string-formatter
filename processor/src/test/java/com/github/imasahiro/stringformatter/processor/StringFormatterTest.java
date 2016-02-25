@@ -405,4 +405,27 @@ public final class StringFormatterTest {
                          + "  }\n"
                          + "}"));
     }
+
+    @Test
+    public void testProcess_not_acceptable() throws Exception {
+        assert_().about(javaSource())
+                 .that(JavaFileObjects.forSourceString(
+                         "foo.bar.Baz",
+                         "package foo.bar;\n"
+                         + "\n"
+                         + "import javax.inject.Qualifier;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;\n"
+                         + "import com.github.imasahiro.stringformatter.annotation.Format;\n"
+                         + "\n"
+                         + "public class Baz {\n"
+                         + "  @AutoStringFormatter\n"
+                         + "  interface Formatter {\n"
+                         + "    @Format(\"%d\")\n"
+                         + "    String format(String d);\n"
+                         + "  }\n"
+                         + "}\n"))
+                 .processedWith(new StringFormatterProcessor())
+                 .failsToCompile()
+                 .withErrorContaining(" cannot not apply to ");
+    }
 }

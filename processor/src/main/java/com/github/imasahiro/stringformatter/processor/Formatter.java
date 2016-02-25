@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
@@ -36,12 +37,17 @@ class Formatter {
     private final String format;
     private final int bufferCapacity;
     private final List<TypeMirror> argumentTypes;
+    private final Element element;
+    private final ErrorReporter errorReporter;
 
-    Formatter(String name, String format, int bufferCapacity, List<TypeMirror> argumentTypes) {
+    Formatter(String name, String format, int bufferCapacity, List<TypeMirror> argumentTypes,
+              Element element, ErrorReporter errorReporter) {
         this.name = name;
         this.format = format;
         this.bufferCapacity = bufferCapacity;
         this.argumentTypes = argumentTypes;
+        this.element = element;
+        this.errorReporter = errorReporter;
     }
 
     private static List<ParameterSpec> buildParamTypes(List<TypeMirror> argumentTypes) {
@@ -88,7 +94,7 @@ class Formatter {
 
         if (!candidateArgumentTypes.stream().anyMatch(
                 candidate -> isAssignableArguments(processingEnv, candidate, expectedTypeList))) {
-            throw new RuntimeException(name + " cannot not acceptable to " + expectedTypeList);
+            errorReporter.fatal(name + " cannot not apply to " + expectedTypeList, element);
         }
     }
 
@@ -105,7 +111,7 @@ class Formatter {
     }
 
     public MethodSpec getMethod(ProcessingEnvironment processingEnv) {
-        List<FormatString> formatStringList = FormatParser.parse(format);
+        List<FormatString> formatStringList = FormatParser.parse(format, element, errorReporter);
         checkArgumentTypes(processingEnv, formatStringList, argumentTypes);
         return MethodSpec.methodBuilder(name)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -129,6 +135,8 @@ class Formatter {
         private int bufferCapacity;
         private String format;
         private ImmutableList<TypeMirror> argumentTypes;
+        private Element element;
+        private ErrorReporter errorReporter;
 
         public Builder name(String name) {
             this.name = name;
@@ -150,8 +158,18 @@ class Formatter {
             return this;
         }
 
+        public Builder element(Element element) {
+            this.element = element;
+            return this;
+        }
+
+        public Builder errorReporter(ErrorReporter errorReporter) {
+            this.errorReporter = errorReporter;
+            return this;
+        }
+
         public Formatter build() {
-            return new Formatter(name, format, bufferCapacity, argumentTypes);
+            return new Formatter(name, format, bufferCapacity, argumentTypes, element, errorReporter);
         }
 
     }

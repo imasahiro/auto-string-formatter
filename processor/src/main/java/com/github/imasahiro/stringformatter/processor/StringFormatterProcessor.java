@@ -52,32 +52,38 @@ import jp.skypencil.guava.stream.GuavaCollectors;
 public class StringFormatterProcessor extends AbstractProcessor {
 
     private static final TypeName JAVA_LANG_STRING = TypeName.get(String.class);
+    private ErrorReporter errorReporter;
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+        errorReporter = new ErrorReporter(processingEnv.getMessager());
         Set<? extends Element> annotatedElements =
                 roundEnv.getElementsAnnotatedWith(AutoStringFormatter.class);
 
-        ElementFilter.typesIn(annotatedElements).forEach(
-                typeElement -> {
-                    List<Formatter> formatterList = buildFormatter(typeElement);
-                    PackageElement packageElement = MoreElements.getPackage(typeElement);
-                    String className = generateClassName(typeElement);
-                    String packageName = packageElement.getQualifiedName().toString();
-                    String sourceName = packageElement + "." + className;
+        try {
+            ElementFilter.typesIn(annotatedElements).forEach(
+                    typeElement -> {
+                        List<Formatter> formatterList = buildFormatter(typeElement);
+                        PackageElement packageElement = MoreElements.getPackage(typeElement);
+                        String className = generateClassName(typeElement);
+                        String packageName = packageElement.getQualifiedName().toString();
+                        String sourceName = packageElement + "." + className;
 
-                    JavaFile javaFile = JavaFile.builder(packageName, buildClass(typeElement, className,
-                                                                                 formatterList))
-                                                .build();
-                    try (Writer writer = processingEnv.getFiler()
-                                                      .createSourceFile(sourceName)
-                                                      .openWriter()) {
-                        javaFile.writeTo(writer);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        return true;
+                        JavaFile javaFile = JavaFile.builder(packageName, buildClass(typeElement, className,
+                                                                                     formatterList))
+                                                    .build();
+                        try (Writer writer = processingEnv.getFiler()
+                                                          .createSourceFile(sourceName)
+                                                          .openWriter()) {
+                            javaFile.writeTo(writer);
+                        } catch (IOException ignored) {
+                            errorReporter.fatal("Cannot write java file to " + className, typeElement);
+                        }
+                    });
+            return true;
+        } catch (AbortProcessingException ignored) {
+        }
+        return false;
     }
 
     private TypeSpec buildClass(TypeElement superInterface, String className, List<Formatter> formatterList) {
@@ -122,17 +128,18 @@ public class StringFormatterProcessor extends AbstractProcessor {
     private List<Formatter> buildFormatter(TypeElement element) {
         AutoStringFormatter type = element.getAnnotation(AutoStringFormatter.class);
         if (!isInterface(element)) {
-            throw new RuntimeException("@" + AutoStringFormatter.class.getName() +
-                                       " only applies to interfaces. " + type);
+            errorReporter.warn("@" + AutoStringFormatter.class.getName() +
+                               "only applies to interfaces. " + type, element);
+            return ImmutableList.of();
         }
         return filterFormatAnnotatedMethods(
                 MoreElements.getLocalAndInheritedMethods(element, processingEnv.getElementUtils()))
                 .stream()
-                .map(StringFormatterProcessor::buildFormatter)
+                .map(this::buildFormatter)
                 .collect(GuavaCollectors.toImmutableList());
     }
 
-    private static Formatter buildFormatter(ExecutableElement method) {
+    private Formatter buildFormatter(ExecutableElement method) {
         Format fmt = method.getAnnotation(Format.class);
         return Formatter.builder()
                         .name(method.getSimpleName().toString())
@@ -141,6 +148,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .argumentTypeNames(method.getParameters().stream()
                                                  .map(Element::asType)
                                                  .collect(GuavaCollectors.toImmutableList()))
+                        .element(method)
+                        .errorReporter(errorReporter)
                         .build();
     }
 }

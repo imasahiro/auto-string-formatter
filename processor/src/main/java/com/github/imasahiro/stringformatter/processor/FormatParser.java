@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.lang.model.element.Element;
+
 public class FormatParser {
     // %[index][flags][width][.precision][t]conversion
     private static final String FORMAT_SPECIFIER =
@@ -30,7 +32,7 @@ public class FormatParser {
     /**
      * Parse format specifiers in the format string.
      */
-    public static List<FormatString> parse(String fmt) {
+    public static List<FormatString> parse(String fmt, Element element, ErrorReporter errorReporter) {
         ArrayList<FormatString> formatStrings = new ArrayList<>();
         Matcher m = FORMAT_SPECIFIER_PATTERN.matcher(fmt);
         int index = 0;
@@ -39,7 +41,10 @@ public class FormatParser {
                 if (m.start() != i) {
                     formatStrings.add(FixedString.of(fmt, i, m.start()));
                 }
-                FormatString specifier = FormatSpecifier.of(fmt, m, index);
+                FormatString specifier = new FormatStringBuilder(element, errorReporter).format(fmt)
+                                                                                        .matcher(m)
+                                                                                        .index(index)
+                                                                                        .build();
                 if (specifier instanceof FormatSpecifier && index == specifier.getIndex()) {
                     index++;
                 }
