@@ -29,6 +29,7 @@ import com.github.imasahiro.stringformatter.processor.specifier.FormatConversion
 import com.github.imasahiro.stringformatter.processor.specifier.HexIntegerFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.specifier.IntegerFormatConversionType;
 import com.github.imasahiro.stringformatter.processor.specifier.StringFormatConversionType;
+import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
 import com.google.common.primitives.Ints;
 
 class FormatStringBuilder {
@@ -59,6 +60,16 @@ class FormatStringBuilder {
         return this;
     }
 
+    FormatString newFixedString(String s, int begin, int end) {
+        for (int i = begin; i < end; i++) {
+            if (s.charAt(i) == '%') {
+                String conversion = i != end - 1 ? String.valueOf(s.charAt(i + 1)) : "";
+                errorReporter.fatal("Unrecognized conversion : " + conversion, element);
+            }
+        }
+        return new FixedString(s.substring(begin, end));
+    }
+
     FormatString build() {
         index = parseIndex(index, format, matcher.start(1), matcher.end(1));
         Set<FormatFlag> flags = parseFlags(format, matcher.start(2), matcher.end(2));
@@ -82,11 +93,11 @@ class FormatStringBuilder {
             case 'n':
                 checkArgument(width >= 0, "width is not applicable for line separator conversion.");
                 checkArgument(precision >= 0, "precision is not applicable for line separator conversion.");
-                return FixedString.of(System.getProperty("line.separator", "\n"));
+                return new FixedString(System.getProperty("line.separator", "\n"));
             case '%':
                 checkArgument(width >= 0, "width is not applicable for percent conversion.");
                 checkArgument(precision >= 0, "precision is not applicable for percent conversion.");
-                return FixedString.of("%");
+                return new FixedString("%");
             case 'b':
             case 'B':
                 checkArgument(precision >= 0, "precision is not applicable for boolean conversion.");

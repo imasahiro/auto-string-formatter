@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.imasahiro.stringformatter.processor;
+package com.github.imasahiro.stringformatter.processor.util;
 
 public class AbortProcessingException extends RuntimeException {
 }

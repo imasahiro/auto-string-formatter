@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 
 import javax.lang.model.element.Element;
 
+import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
+
 public class FormatParser {
     // %[index][flags][width][.precision][t]conversion
     private static final String FORMAT_SPECIFIER =
@@ -36,22 +38,23 @@ public class FormatParser {
         ArrayList<FormatString> formatStrings = new ArrayList<>();
         Matcher m = FORMAT_SPECIFIER_PATTERN.matcher(fmt);
         int index = 0;
+        FormatStringBuilder formatStringBuilder = new FormatStringBuilder(element, errorReporter);
         for (int i = 0; i < fmt.length(); ) {
             if (m.find(i)) {
                 if (m.start() != i) {
-                    formatStrings.add(FixedString.of(fmt, i, m.start()));
+                    formatStrings.add(formatStringBuilder.newFixedString(fmt, i, m.start()));
                 }
-                FormatString specifier = new FormatStringBuilder(element, errorReporter).format(fmt)
-                                                                                        .matcher(m)
-                                                                                        .index(index)
-                                                                                        .build();
+                FormatString specifier = formatStringBuilder.format(fmt)
+                                                            .matcher(m)
+                                                            .index(index)
+                                                            .build();
                 if (specifier instanceof FormatSpecifier && index == specifier.getIndex()) {
                     index++;
                 }
                 formatStrings.add(specifier);
                 i = m.end();
             } else {
-                formatStrings.add(FixedString.of(fmt, i, fmt.length()));
+                formatStrings.add(formatStringBuilder.newFixedString(fmt, i, fmt.length()));
                 break;
             }
         }

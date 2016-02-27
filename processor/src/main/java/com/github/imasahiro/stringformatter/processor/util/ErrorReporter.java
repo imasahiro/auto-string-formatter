@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.imasahiro.stringformatter.processor;
+package com.github.imasahiro.stringformatter.processor.util;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
@@ -23,7 +23,7 @@ import javax.tools.Diagnostic;
 public class ErrorReporter {
     private final Messager messager;
 
-    ErrorReporter(Messager messager) {
+    public ErrorReporter(Messager messager) {
         this.messager = messager;
     }
 

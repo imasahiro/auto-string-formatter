@@ -24,6 +24,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
+import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;

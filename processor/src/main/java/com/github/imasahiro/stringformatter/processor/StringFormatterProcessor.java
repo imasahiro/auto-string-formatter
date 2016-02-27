@@ -38,6 +38,8 @@ import javax.lang.model.util.ElementFilter;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
+import com.github.imasahiro.stringformatter.processor.util.AbortProcessingException;
+import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
 import com.google.auto.common.MoreElements;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.AnnotationSpec;
