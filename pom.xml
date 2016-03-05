@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.imasahiro</groupId>
   <artifactId>string-formatter</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -29,7 +29,7 @@
     <url>${project.url}</url>
     <connection>scm:git:https://github.com/imasahiro/string-formatter.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/imasahiro/string-formatter.git</developerConnection>
-    <tag>string-formatter-0.4.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
