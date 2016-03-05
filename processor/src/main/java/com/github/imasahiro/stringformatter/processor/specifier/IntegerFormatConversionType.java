@@ -35,6 +35,8 @@ public class IntegerFormatConversionType extends FormatConversionType {
 
     private static final Mustache TEMPLATE =
             new DefaultMustacheFactory().compile("template/int.mustache");
+    private static final Mustache TEMPLATE_WIDTH =
+            new DefaultMustacheFactory().compile("template/int_with_width.mustache");
 
     @Override
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
@@ -45,10 +47,15 @@ public class IntegerFormatConversionType extends FormatConversionType {
 
     @Override
     public String emit(String arg, int width, int precision, Set<FormatFlag> flags, TypeMirror argumentType) {
-        return getCode(TEMPLATE, ImmutableMap.of("FORMATTER_NAME", FORMATTER_NAME,
-                                                 "ARG", arg,
-                                                 "flags", convertFlags(flags),
-                                                 "width", String.valueOf(width)));
+        if (width >= 0) {
+            return getCode(TEMPLATE_WIDTH, ImmutableMap.of("FORMATTER_NAME", FORMATTER_NAME,
+                                                           "ARG", arg,
+                                                           "flags", convertFlags(flags),
+                                                           "width", String.valueOf(width)));
+        } else {
+            return getCode(TEMPLATE, ImmutableMap.of("ARG", arg));
+        }
+
     }
 
     private static String convertFlags(Set<FormatFlag> flags) {

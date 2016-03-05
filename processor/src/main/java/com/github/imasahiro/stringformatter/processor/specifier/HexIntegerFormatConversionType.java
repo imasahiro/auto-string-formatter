@@ -35,7 +35,7 @@ public class HexIntegerFormatConversionType extends IntegerFormatConversionType 
     private static final String FORMATTER_NAME = HexIntegerFormatter.class.getCanonicalName();
 
     private static final Mustache TEMPLATE =
-            new DefaultMustacheFactory().compile("template/int.mustache");
+            new DefaultMustacheFactory().compile("template/int_with_width.mustache");
 
     @Override
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
