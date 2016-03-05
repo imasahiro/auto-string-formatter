@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jmh.version>1.11.3</jmh.version>
   </properties>
   <build>
     <plugins>
@@ -39,6 +40,16 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>string-formatter-runtime</artifactId>
       <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>${jmh.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>

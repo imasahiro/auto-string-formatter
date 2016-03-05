@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.imasahiro.stringprocessor.benchmark;
+package com.github.imasahiro.stringformatter.benchmark;
+
+import java.io.IOException;
+
+import org.openjdk.jmh.Main;
+import org.openjdk.jmh.runner.RunnerException;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
@@ -24,53 +29,47 @@ public class IntegerStringify {
 
     @AutoStringFormatter
     interface Formatter {
-        @Format(value = FORMAT)
+        @Format(FORMAT)
         String format(int a, int b, int c, int d);
     }
 
-    public static void main(String... args) {
-        for (int i = 0; i < 100; i++) {
-            f(10);
-        }
-        for (int i = 0; i < 100; i++) {
-            f(100000);
+    public static void main(String... args) throws IOException, RunnerException {
+        Main.main("-wi 3 -i 5 -f 2".split(" "));
+    }
+
+    private static final int size = 10;
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public void javaStringFormat() {
+        String s = null;
+        for (int i = 0; i < size; i++) {
+            s = javaStringFormat(FORMAT, i, 2, i * 2, i + 2 * (i + 2));
         }
     }
 
-    public static void f(int n) {
-        long start = System.currentTimeMillis();
+    @org.openjdk.jmh.annotations.Benchmark
+    public void javaStringConcat() {
         String s = null;
-        for (int i = 0; i < n; i++) {
-            //s = javaStringFormat(FORMAT, i, 2, i * 2, i + 2 * (i + 2));
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println("Format = " + (end - start) + " millisecond");
-
-        start = System.currentTimeMillis();
-
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < size; i++) {
             s = javaStringConcat(i, 2, i * 2, i + 2 * (i + 2));
         }
-        end = System.currentTimeMillis();
-        System.out.println("Concatenation = " + (end - start) + " millisecond");
+    }
 
-        start = System.currentTimeMillis();
-
-        for (int i = 0; i < n; i++) {
+    @org.openjdk.jmh.annotations.Benchmark
+    public void stringBuilder() {
+        String s = null;
+        for (int i = 0; i < size; i++) {
             s = stringBuilder(i, 2, i * 2, i + 2 * (i + 2));
         }
+    }
 
-        end = System.currentTimeMillis();
-        System.out.println("String Builder = " + (end - start) + " millisecond");
-
-        start = System.currentTimeMillis();
+    @org.openjdk.jmh.annotations.Benchmark
+    public void autoStringFormatter() {
+        String s = null;
         IntegerStringify.Formatter formatter = new IntegerStringify_Formatter();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < size; i++) {
             s = formatter.format(i, 2, i * 2, i + 2 * (i + 2));
         }
-        end = System.currentTimeMillis();
-        System.out.println("StringFormatter = " + (end - start) + " millisecond");
     }
 
     private static String stringBuilder(int a, int b, int c, int d) {
