@@ -19,6 +19,7 @@ package com.github.imasahiro.stringformatter.benchmark;
 import java.io.IOException;
 
 import org.openjdk.jmh.Main;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
@@ -40,35 +41,31 @@ public class IntegerStringify {
     private static final int size = 10;
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void javaStringFormat() {
-        String s = null;
+    public void javaStringFormat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = javaStringFormat(FORMAT, i, 2, i * 2, i + 2 * (i + 2));
+            blackhole.consume(javaStringFormat(FORMAT, i, 2, i * 2, i + 2 * (i + 2)));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void javaStringConcat() {
-        String s = null;
+    public void javaStringConcat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = javaStringConcat(i, 2, i * 2, i + 2 * (i + 2));
+            blackhole.consume(javaStringConcat(i, 2, i * 2, i + 2 * (i + 2)));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void stringBuilder() {
-        String s = null;
+    public void stringBuilder(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = stringBuilder(i, 2, i * 2, i + 2 * (i + 2));
+            blackhole.consume(stringBuilder(i, 2, i * 2, i + 2 * (i + 2)));;
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void autoStringFormatter() {
-        String s = null;
-        IntegerStringify.Formatter formatter = new IntegerStringify_Formatter();
+    public void autoStringFormatter(Blackhole blackhole) {
+        Formatter formatter = new IntegerStringify_Formatter();
         for (int i = 0; i < size; i++) {
-            s = formatter.format(i, 2, i * 2, i + 2 * (i + 2));
+            blackhole.consume(formatter.format(i, 2, i * 2, i + 2 * (i + 2)));
         }
     }
 

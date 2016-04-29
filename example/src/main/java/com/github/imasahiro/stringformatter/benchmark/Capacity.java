@@ -19,6 +19,7 @@ package com.github.imasahiro.stringformatter.benchmark;
 import java.io.IOException;
 
 import org.openjdk.jmh.Main;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
@@ -46,28 +47,25 @@ public class Capacity {
     private static final int size = 10;
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void javaStringFormat() {
-        String s = null;
+    public void javaStringFormat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = String.format(FORMAT, i, i, i, i, i, i);
+            blackhole.consume(String.format(FORMAT, i, i, i, i, i, i));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void autoStringFormatter() {
-        String s = null;
+    public void autoStringFormatter(Blackhole blackhole) {
         Formatter formatter = new Capacity_Formatter();
         for (int i = 0; i < size; i++) {
-            s = formatter.format(i, i, i, i, i, i);
+            blackhole.consume(formatter.format(i, i, i, i, i, i));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void autoStringFormatterCapacity() {
-        String s = null;
+    public void autoStringFormatterCapacity(Blackhole blackhole) {
         FormatterWithCapacity formatter = new Capacity_FormatterWithCapacity();
         for (int i = 0; i < size; i++) {
-            s = formatter.format(i, i, i, i, i, i);
+            blackhole.consume(formatter.format(i, i, i, i, i, i));
         }
     }
 }

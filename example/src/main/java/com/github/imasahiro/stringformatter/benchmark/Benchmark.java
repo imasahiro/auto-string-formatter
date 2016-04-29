@@ -19,6 +19,7 @@ package com.github.imasahiro.stringformatter.benchmark;
 import java.io.IOException;
 
 import org.openjdk.jmh.Main;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
@@ -40,35 +41,31 @@ public class Benchmark {
     private static final int size = 10;
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void javaStringFormat() {
-        String s = null;
+    public void javaStringFormat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = javaStringFormat(FORMAT, i);
+            blackhole.consume(javaStringFormat(FORMAT, i));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void javaStringConcat() {
-        String s = null;
+    public void javaStringConcat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = javaStringConcat(i);
+            blackhole.consume(javaStringConcat(i));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void stringBuilder() {
-        String s = null;
+    public void stringBuilder(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            s = stringBuilder(i);
+            blackhole.consume(stringBuilder(i));
         }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void autoStringFormatter() {
-        String s = null;
+    public void autoStringFormatter(Blackhole blackhole) {
         Formatter formatter = new Benchmark_Formatter();
         for (int i = 0; i < size; i++) {
-            s = formatter.format(String.valueOf(i), String.valueOf(i * 2));
+            blackhole.consume(formatter.format(String.valueOf(i), String.valueOf(i * 2)));
         }
     }
 
