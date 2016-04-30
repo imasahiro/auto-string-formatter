@@ -33,7 +33,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 
-class Formatter {
+class FormatterMethod {
     private final String name;
     private final String format;
     private final int bufferCapacity;
@@ -41,8 +41,8 @@ class Formatter {
     private final Element element;
     private final ErrorReporter errorReporter;
 
-    Formatter(String name, String format, int bufferCapacity, List<TypeMirror> argumentTypes,
-              Element element, ErrorReporter errorReporter) {
+    FormatterMethod(String name, String format, int bufferCapacity, List<TypeMirror> argumentTypes,
+                    Element element, ErrorReporter errorReporter) {
         this.name = name;
         this.format = format;
         this.bufferCapacity = bufferCapacity;
@@ -124,7 +124,7 @@ class Formatter {
 
     @Override
     public String toString() {
-        return "Formatter(name:" + name + ", format:" + format + ", bufferCapacity:" + bufferCapacity + ")";
+        return "FormatterMethod(name:" + name + ", format:" + format + ", bufferCapacity:" + bufferCapacity + ")";
     }
 
     public static Builder builder() {
@@ -169,8 +169,8 @@ class Formatter {
             return this;
         }
 
-        public Formatter build() {
-            return new Formatter(name, format, bufferCapacity, argumentTypes, element, errorReporter);
+        public FormatterMethod build() {
+            return new FormatterMethod(name, format, bufferCapacity, argumentTypes, element, errorReporter);
         }
 
     }

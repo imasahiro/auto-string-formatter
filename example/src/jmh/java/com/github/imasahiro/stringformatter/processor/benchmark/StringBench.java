@@ -19,24 +19,13 @@ package com.github.imasahiro.stringformatter.processor.benchmark;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.infra.Blackhole;
 
-import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
-import com.github.imasahiro.stringformatter.annotation.Format;
-
 public class StringBench {
-    private static final String FORMAT = "Hi %s; Hi to you %s";
-
-    @AutoStringFormatter
-    interface Formatter {
-        @Format(FORMAT)
-        String format(String thisName, String otherName);
-    }
-
     private static final int size = 10;
 
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringFormat(FORMAT, i));
+            blackhole.consume(javaStringFormat(StringBenchFormatter.FORMAT, i));
         }
     }
 
@@ -56,7 +45,7 @@ public class StringBench {
 
     @Benchmark
     public void autoStringFormatter(Blackhole blackhole) {
-        Formatter formatter = new StringBench_Formatter();
+        StringBenchFormatter.Formatter formatter = new StringBenchFormatter_Formatter();
         for (int i = 0; i < size; i++) {
             blackhole.consume(formatter.format(String.valueOf(i), String.valueOf(i * 2)));
         }

@@ -19,24 +19,14 @@ package com.github.imasahiro.stringformatter.processor.benchmark;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.infra.Blackhole;
 
-import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
-import com.github.imasahiro.stringformatter.annotation.Format;
-
 public class IntegerStringifyBench {
-    private static final String FORMAT = "%d + %d * %d = %d";
-
-    @AutoStringFormatter
-    interface Formatter {
-        @Format(FORMAT)
-        String format(int a, int b, int c, int d);
-    }
-
     private static final int size = 10;
 
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringFormat(FORMAT, i, 2, i * 2, i + 2 * (i + 2)));
+            blackhole.consume(javaStringFormat(IntegerStringifyBenchFormatter.FORMAT,
+                                               i, 2, i * 2, i + 2 * (i + 2)));
         }
     }
 
@@ -50,13 +40,13 @@ public class IntegerStringifyBench {
     @Benchmark
     public void stringBuilder(Blackhole blackhole) {
         for (int i = 0; i < size; i++) {
-            blackhole.consume(stringBuilder(i, 2, i * 2, i + 2 * (i + 2)));;
+            blackhole.consume(stringBuilder(i, 2, i * 2, i + 2 * (i + 2)));
         }
     }
 
     @Benchmark
     public void autoStringFormatter(Blackhole blackhole) {
-        Formatter formatter = new IntegerStringifyBench_Formatter();
+        IntegerStringifyBenchFormatter.Formatter formatter = new IntegerStringifyBenchFormatter_Formatter();
         for (int i = 0; i < size; i++) {
             blackhole.consume(formatter.format(i, 2, i * 2, i + 2 * (i + 2)));
         }
