@@ -28,18 +28,17 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.inject.Named;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 import com.github.imasahiro.stringformatter.processor.util.AbortProcessingException;
 import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
+import com.github.imasahiro.stringformatter.processor.util.TypeUtils;
 import com.google.auto.common.MoreElements;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.AnnotationSpec;
@@ -58,37 +57,60 @@ public class StringFormatterProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        errorReporter = new ErrorReporter(processingEnv.getMessager());
-        Set<? extends Element> annotatedElements =
-                roundEnv.getElementsAnnotatedWith(AutoStringFormatter.class);
-
         try {
-            ElementFilter.typesIn(annotatedElements).forEach(
-                    typeElement -> {
-                        List<Formatter> formatterList = buildFormatter(typeElement);
-                        PackageElement packageElement = MoreElements.getPackage(typeElement);
-                        String className = generateClassName(typeElement);
-                        String packageName = packageElement.getQualifiedName().toString();
-                        String sourceName = packageElement + "." + className;
-
-                        JavaFile javaFile = JavaFile.builder(packageName, buildClass(typeElement, className,
-                                                                                     formatterList))
-                                                    .build();
-                        try (Writer writer = processingEnv.getFiler()
-                                                          .createSourceFile(sourceName)
-                                                          .openWriter()) {
-                            javaFile.writeTo(writer);
-                        } catch (IOException ignored) {
-                            errorReporter.fatal("Cannot write java file to " + className, typeElement);
-                        }
-                    });
+            errorReporter = new ErrorReporter(processingEnv.getMessager());
+            generateJavaSource(roundEnv.getElementsAnnotatedWith(AutoStringFormatter.class));;
             return true;
         } catch (AbortProcessingException ignored) {
         }
         return false;
     }
 
-    private TypeSpec buildClass(TypeElement superInterface, String className, List<Formatter> formatterList) {
+    private static class SourceData {
+        private final PackageElement packageElement;
+        private final String packageName;
+        private final String className;
+
+        SourceData(PackageElement packageElement, TypeElement typeElement) {
+            this.packageElement = packageElement;
+            packageName = packageElement.getQualifiedName().toString();
+            className = TypeUtils.generateClassName(typeElement);
+        }
+
+        String getSourceName() {
+            return packageElement + "." + className;
+        }
+
+        String getPackageName() {
+            return packageName;
+        }
+
+        String getClassName() {
+            return className;
+        }
+    }
+
+    private void generateJavaSource(Set<? extends Element> annotatedElements) {
+        ElementFilter.typesIn(annotatedElements).forEach(
+                typeElement -> {
+                    List<FormatterMethod> formatterMethodList = buildFormatterMethods(typeElement);
+                    SourceData source = new SourceData(MoreElements.getPackage(typeElement), typeElement);
+
+                    try (Writer writer = processingEnv.getFiler()
+                                                      .createSourceFile(source.getSourceName())
+                                                      .openWriter()) {
+                        JavaFile javaFile = JavaFile.builder(source.getPackageName(),
+                                                             buildClass(typeElement, source.getClassName(),
+                                                                        formatterMethodList))
+                                                    .build();
+                        javaFile.writeTo(writer);
+                    } catch (IOException ignored) {
+                        errorReporter.fatal("Cannot write java file to " + source.getSourceName(), typeElement);
+                    }
+                });
+    }
+
+    private TypeSpec buildClass(TypeElement superInterface, String className, List<FormatterMethod> formatterMethodList) {
         TypeSpec.Builder builder =
                 TypeSpec.classBuilder(className)
                         .addSuperinterface(TypeName.get(superInterface.asType()))
@@ -97,25 +119,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
                                                      .addMember("value", "{$S}", getClass().getCanonicalName())
                                                      .build())
                         .addAnnotation(AnnotationSpec.builder(Named.class).build());
-        formatterList.forEach(formatter -> builder.addMethod(formatter.getMethod(processingEnv)));
+        formatterMethodList.forEach(formatter -> builder.addMethod(formatter.getMethod(processingEnv)));
         return builder.build();
-    }
-
-    private static String generateClassName(TypeElement type) {
-        String name = type.getSimpleName().toString();
-        while (type.getEnclosingElement() instanceof TypeElement) {
-            type = (TypeElement) type.getEnclosingElement();
-            name = type.getSimpleName() + "_" + name;
-        }
-        return name;
-    }
-
-    private TypeMirror getTypeMirror(Class<?> c) {
-        return processingEnv.getElementUtils().getTypeElement(c.getName()).asType();
-    }
-
-    private static boolean isInterface(TypeElement type) {
-        return type.getKind() == ElementKind.INTERFACE;
     }
 
     private static List<ExecutableElement> filterFormatAnnotatedMethods(Set<ExecutableElement> methods) {
@@ -127,9 +132,9 @@ public class StringFormatterProcessor extends AbstractProcessor {
         return targetMethods.build();
     }
 
-    private List<Formatter> buildFormatter(TypeElement element) {
+    private List<FormatterMethod> buildFormatterMethods(TypeElement element) {
         AutoStringFormatter type = element.getAnnotation(AutoStringFormatter.class);
-        if (!isInterface(element)) {
+        if (!TypeUtils.isInterface(element)) {
             errorReporter.warn("@" + AutoStringFormatter.class.getName() +
                                "only applies to interfaces. " + type, element);
             return ImmutableList.of();
@@ -137,21 +142,21 @@ public class StringFormatterProcessor extends AbstractProcessor {
         return filterFormatAnnotatedMethods(
                 MoreElements.getLocalAndInheritedMethods(element, processingEnv.getElementUtils()))
                 .stream()
-                .map(this::buildFormatter)
+                .map(this::buildFormatterMethod)
                 .collect(GuavaCollectors.toImmutableList());
     }
 
-    private Formatter buildFormatter(ExecutableElement method) {
+    private FormatterMethod buildFormatterMethod(ExecutableElement method) {
         Format fmt = method.getAnnotation(Format.class);
-        return Formatter.builder()
-                        .name(method.getSimpleName().toString())
-                        .formatter(fmt.value())
-                        .bufferCapacity(fmt.capacity())
-                        .argumentTypeNames(method.getParameters().stream()
+        return FormatterMethod.builder()
+                              .name(method.getSimpleName().toString())
+                              .formatter(fmt.value())
+                              .bufferCapacity(fmt.capacity())
+                              .argumentTypeNames(method.getParameters().stream()
                                                  .map(Element::asType)
                                                  .collect(GuavaCollectors.toImmutableList()))
-                        .element(method)
-                        .errorReporter(errorReporter)
-                        .build();
+                              .element(method)
+                              .errorReporter(errorReporter)
+                              .build();
     }
 }
