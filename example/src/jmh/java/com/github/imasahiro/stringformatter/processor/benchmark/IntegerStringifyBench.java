@@ -16,40 +16,48 @@
 
 package com.github.imasahiro.stringformatter.processor.benchmark;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.infra.Blackhole;
 
 public class IntegerStringifyBench {
-    private static final int size = 10;
+    private static final IntegerStringifyBenchFormatter.Formatter formatter =
+            new IntegerStringifyBenchFormatter_Formatter();
+    private static final Supplier<Integer> integerSupplier = () -> ThreadLocalRandom.current().nextInt();
 
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringFormat(IntegerStringifyBenchFormatter.FORMAT,
-                                               i, 2, i * 2, i + 2 * (i + 2)));
-        }
+        blackhole.consume(javaStringFormat(IntegerStringifyBenchFormatter.FORMAT,
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     @Benchmark
     public void javaStringConcat(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringConcat(i, 2, i * 2, i + 2 * (i + 2)));
-        }
+        blackhole.consume(javaStringConcat(integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     @Benchmark
     public void stringBuilder(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(stringBuilder(i, 2, i * 2, i + 2 * (i + 2)));
-        }
+        blackhole.consume(stringBuilder(integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get()));
     }
 
     @Benchmark
     public void autoStringFormatter(Blackhole blackhole) {
-        IntegerStringifyBenchFormatter.Formatter formatter = new IntegerStringifyBenchFormatter_Formatter();
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(formatter.format(i, 2, i * 2, i + 2 * (i + 2)));
-        }
+        blackhole.consume(formatter.format(integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     private static String stringBuilder(int a, int b, int c, int d) {

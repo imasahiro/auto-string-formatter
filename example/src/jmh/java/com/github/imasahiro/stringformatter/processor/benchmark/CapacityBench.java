@@ -16,33 +16,47 @@
 
 package com.github.imasahiro.stringformatter.processor.benchmark;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.infra.Blackhole;
 
 public class CapacityBench {
-    private static final int size = 10;
+    private static final CapacityBenchFormatter.Formatter formatter = new CapacityBenchFormatter_Formatter();
+    private static final CapacityBenchFormatter.FormatterWithCapacity formatterWithCapacity
+            = new CapacityBenchFormatter_FormatterWithCapacity();
+
+    private static final Supplier<Integer> integerSupplier = () -> ThreadLocalRandom.current().nextInt();
 
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(String.format(CapacityBenchFormatter.FORMAT, i, i, i, i, i, i));
-        }
+        blackhole.consume(String.format(CapacityBenchFormatter.FORMAT,
+                                        integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get(),
+                                        integerSupplier.get()));
     }
 
     @Benchmark
     public void autoStringFormatter(Blackhole blackhole) {
-        CapacityBenchFormatter.Formatter formatter = new CapacityBenchFormatter_Formatter();
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(formatter.format(i, i, i, i, i, i));
-        }
+        blackhole.consume(formatter.format(integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     @Benchmark
     public void autoStringFormatterCapacity(Blackhole blackhole) {
-        CapacityBenchFormatter.FormatterWithCapacity formatter =
-                new CapacityBenchFormatter_FormatterWithCapacity();
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(formatter.format(i, i, i, i, i, i));
-        }
+        blackhole.consume(formatterWithCapacity.format(integerSupplier.get(),
+                                                       integerSupplier.get(),
+                                                       integerSupplier.get(),
+                                                       integerSupplier.get(),
+                                                       integerSupplier.get(),
+                                                       integerSupplier.get()));
     }
 }

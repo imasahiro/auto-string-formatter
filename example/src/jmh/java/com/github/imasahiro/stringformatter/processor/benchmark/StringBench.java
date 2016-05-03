@@ -16,58 +16,59 @@
 
 package com.github.imasahiro.stringformatter.processor.benchmark;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.infra.Blackhole;
 
 public class StringBench {
-    private static final int size = 10;
+
+    private static final StringBenchFormatter.Formatter formatter = new StringBenchFormatter_Formatter();
+    private static final Supplier<Integer> integerSupplier = () -> ThreadLocalRandom.current().nextInt();
 
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringFormat(StringBenchFormatter.FORMAT, i));
-        }
+        blackhole.consume(javaStringFormat(StringBenchFormatter.FORMAT,
+                                           integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     @Benchmark
     public void javaStringConcat(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(javaStringConcat(i));
-        }
+        blackhole.consume(javaStringConcat(integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
     @Benchmark
     public void stringBuilder(Blackhole blackhole) {
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(stringBuilder(i));
-        }
+        blackhole.consume(stringBuilder(integerSupplier.get(),
+                                        integerSupplier.get()));
     }
 
     @Benchmark
     public void autoStringFormatter(Blackhole blackhole) {
-        StringBenchFormatter.Formatter formatter = new StringBenchFormatter_Formatter();
-        for (int i = 0; i < size; i++) {
-            blackhole.consume(formatter.format(String.valueOf(i), String.valueOf(i * 2)));
-        }
+        blackhole.consume(formatter.format(integerSupplier.get(),
+                                           integerSupplier.get()));
     }
 
-    private static String stringBuilder(int i) {
+    private static String stringBuilder(int i, int j) {
         StringBuilder bldString = new StringBuilder("Hi ");
         bldString.append(i);
         bldString.append("; Hi to you ");
-        bldString.append(i * 2);
+        bldString.append(j);
         return bldString.toString();
     }
 
-    private static String javaStringConcat(int i) {
+    private static String javaStringConcat(int i, int j) {
         String s = "Hi ";
         s += i;
         s += "; Hi to you ";
-        s += i * 2;
+        s += j;
         return s;
     }
 
-    private static String javaStringFormat(String formatString, int i) {
-        return String.format(formatString, i, i * 2);
+    private static String javaStringFormat(String formatString, int i, int j) {
+        return String.format(formatString, i, j);
     }
 }

@@ -25,6 +25,6 @@ public class StringBenchFormatter {
     @AutoStringFormatter
     interface Formatter {
         @Format(FORMAT)
-        String format(String thisName, String otherName);
+        String format(int thisName, int otherName);
     }
 }
