@@ -103,7 +103,8 @@ class FormatterMethod {
                                           List<TypeMirror> expectedTypeList) {
         Types typeUtils = processingEnv.getTypeUtils();
         for (int i = 0; i < candidate.size(); i++) {
-            if (!typeUtils.isAssignable(expectedTypeList.get(i), candidate.get(i))) {
+            if (!typeUtils.isAssignable(expectedTypeList.get(i),
+                                        candidate.get(i))) {
                 return false;
             }
         }

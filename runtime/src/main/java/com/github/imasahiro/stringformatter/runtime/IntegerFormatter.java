@@ -17,21 +17,8 @@ package com.github.imasahiro.stringformatter.runtime;
 
 public class IntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
-
-    public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
-        long unsigned = Math.abs(v);
-        return format0(sb, unsigned, v < 0, flags, width);
-    }
-
-    public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
-        long unsigned = Math.abs(v);
-        return format0(sb, unsigned, v < 0, flags, width);
-    }
-
-    public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
-        long unsigned = Math.abs(v);
-        return format0(sb, unsigned, v < 0, flags, width);
-    }
+    private static final boolean ENSURE_CAPACITY = true;
+    private static final boolean DISABLE_INT_TO_ASCII_UNROLLING = true;
 
     private static final char[] digits99 = {
             '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', '0', '5', '0', '6', '0', '7', '0', '8', '0', '9',
@@ -46,8 +33,36 @@ public class IntegerFormatter {
             '9', '0', '9', '1', '9', '2', '9', '3', '9', '4', '9', '5', '9', '6', '9', '7', '9', '8', '9', '9'
     };
 
-    private static StringBuilder format0(StringBuilder sb, long val, boolean negative, int flags, int width) {
-        int len = IntegerUtils.log10(val) + (negative ? 1 : 0);
+    public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
+        long unsigned = writeLeftPadding(sb, v, flags, width);
+        return formatTo0(sb, unsigned);
+    }
+
+    public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
+        long unsigned = writeLeftPadding(sb, v, flags, width);
+        return formatTo0(sb, unsigned);
+    }
+
+    public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
+        long unsigned = writeLeftPadding(sb, v, flags, width);
+        return formatTo0(sb, unsigned);
+    }
+
+    private static StringBuilder formatTo0(StringBuilder sb, long unsigned) {
+        if (DISABLE_INT_TO_ASCII_UNROLLING) {
+            return formatWithByteArray(sb, unsigned);
+        } else {
+            return formatToStringUnrolled(sb, unsigned);
+        }
+    }
+
+    private static long writeLeftPadding(StringBuilder sb, long val, int flags, int width) {
+        long unsigned = Math.abs(val);
+        boolean negative = val < 0;
+        int len = IntegerUtils.log10(unsigned) + (negative ? 1 : 0);
+        if (ENSURE_CAPACITY) {
+            sb.ensureCapacity(sb.length() + len + width);
+        }
         if ((flags & PADDED_WITH_ZEROS) != PADDED_WITH_ZEROS) {
             for (int i = len; i < width; i++) {
                 sb.append(' ');
@@ -61,6 +76,10 @@ public class IntegerFormatter {
                 sb.append('0');
             }
         }
+        return unsigned;
+    }
+
+    private static StringBuilder formatToStringUnrolled(StringBuilder sb, long val) {
         // val = aaaabbbbccccddddeeee
         if (val <= 99999999) {
             formatLessThan100Million(sb, val);
@@ -212,5 +231,25 @@ public class IntegerFormatter {
             sb.append(digits99[e2]);
             sb.append(digits99[e2 + 1]);
         }
+    }
+
+    private static StringBuilder formatWithByteArray(StringBuilder sb, long val) {
+        char[] buf = new char[21];
+        int len = IntegerUtils.log10(val);
+
+        int index = len;
+        while (val >= 100) {
+            int idx = (int) (val % 100 * 2);
+            buf[--index] = digits99[idx + 1];
+            buf[--index] = digits99[idx];
+            val /= 100;
+        }
+        if (val < 10) {
+            buf[--index] = (char) ('0' + val);
+        } else {
+            buf[--index] = digits99[(int) (val * 2 + 1)];
+            buf[--index] = digits99[(int) (val * 2)];
+        }
+        return sb.append(buf);
     }
 }

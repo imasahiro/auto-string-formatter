@@ -151,5 +151,4 @@ public class IntegerFormatterTest {
         assertEquals(String.format("%030d", -12L), run(-12L, 30, true));
         assertEquals(String.format("%030d", -1L), run(-1L, 30, true));
     }
-
 }

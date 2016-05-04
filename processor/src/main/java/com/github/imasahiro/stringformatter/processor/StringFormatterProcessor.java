@@ -52,20 +52,6 @@ import jp.skypencil.guava.stream.GuavaCollectors;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class StringFormatterProcessor extends AbstractProcessor {
 
-    private static final TypeName JAVA_LANG_STRING = TypeName.get(String.class);
-    private ErrorReporter errorReporter;
-
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        try {
-            errorReporter = new ErrorReporter(processingEnv.getMessager());
-            generateJavaSource(roundEnv.getElementsAnnotatedWith(AutoStringFormatter.class));;
-            return true;
-        } catch (AbortProcessingException ignored) {
-        }
-        return false;
-    }
-
     private static class SourceData {
         private final PackageElement packageElement;
         private final String packageName;
@@ -90,24 +76,34 @@ public class StringFormatterProcessor extends AbstractProcessor {
         }
     }
 
-    private void generateJavaSource(Set<? extends Element> annotatedElements) {
-        ElementFilter.typesIn(annotatedElements).forEach(
-                typeElement -> {
-                    List<FormatterMethod> formatterMethodList = buildFormatterMethods(typeElement);
-                    SourceData source = new SourceData(MoreElements.getPackage(typeElement), typeElement);
+    private static final TypeName JAVA_LANG_STRING = TypeName.get(String.class);
+    private ErrorReporter errorReporter;
 
-                    try (Writer writer = processingEnv.getFiler()
-                                                      .createSourceFile(source.getSourceName())
-                                                      .openWriter()) {
-                        JavaFile javaFile = JavaFile.builder(source.getPackageName(),
-                                                             buildClass(typeElement, source.getClassName(),
-                                                                        formatterMethodList))
-                                                    .build();
-                        javaFile.writeTo(writer);
-                    } catch (IOException ignored) {
-                        errorReporter.fatal("Cannot write java file to " + source.getSourceName(), typeElement);
-                    }
-                });
+    @Override
+    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+        try {
+            errorReporter = new ErrorReporter(processingEnv.getMessager());
+            ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(AutoStringFormatter.class)).forEach(
+                    typeElement -> {
+                        List<FormatterMethod> formatterMethodList = buildFormatterMethods(typeElement);
+                        SourceData source = new SourceData(MoreElements.getPackage(typeElement), typeElement);
+
+                        try (Writer writer = processingEnv.getFiler()
+                                                          .createSourceFile(source.getSourceName())
+                                                          .openWriter()) {
+                            JavaFile javaFile = JavaFile.builder(source.getPackageName(),
+                                                                 buildClass(typeElement, source.getClassName(),
+                                                                            formatterMethodList))
+                                                        .build();
+                            javaFile.writeTo(writer);
+                        } catch (IOException ignored) {
+                            errorReporter.fatal("Cannot write java file to " + source.getSourceName(), typeElement);
+                        }
+                    });
+            return true;
+        } catch (AbortProcessingException ignored) {
+        }
+        return false;
     }
 
     private TypeSpec buildClass(TypeElement superInterface, String className, List<FormatterMethod> formatterMethodList) {

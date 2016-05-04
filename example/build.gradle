@@ -9,7 +9,6 @@ dependencies {
 }
 
 jmh {
-    jmhVersion = '1.10.+'
     timeUnit = 'ms'
     fork = 2
     iterations = 10
