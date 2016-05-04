@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.imasahiro.stringformatter.runtime;
+package com.github.imasahiro.stringformatter.runtime.integers;
 
 final class IntegerUtils {
     private IntegerUtils() {}

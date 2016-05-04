@@ -103,7 +103,7 @@ public final class StringFormatterTest {
                          + "public final class Baz_Formatter implements Baz.Formatter {\n"
                          + "  public final String format(final int arg0) {\n"
                          + "     final StringBuilder sb = new StringBuilder(16);\n"
-                         + "     com.github.imasahiro.stringformatter.runtime.HexIntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.integers.HexIntegerFormatter.formatTo(sb, arg0, 0, -1);\n"
                          + "     return sb.toString();\n"
                          + "  }\n"
                          + "}"));
@@ -398,9 +398,9 @@ public final class StringFormatterTest {
                          + "public final class Baz_Formatter implements Baz.Formatter {\n"
                          + "  public final String formatTime(final int arg0, final int arg1) {\n"
                          + "     final StringBuilder sb = new StringBuilder(16);\n"
-                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg0, 1, 2);\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.integers.IntegerFormatter.formatTo(sb, arg0, 1, 2);\n"
                          + "     sb.append(\":\");\n"
-                         + "     com.github.imasahiro.stringformatter.runtime.IntegerFormatter.formatTo(sb, arg1, 1, 2);\n"
+                         + "     com.github.imasahiro.stringformatter.runtime.integers.IntegerFormatter.formatTo(sb, arg1, 1, 2);\n"
                          + "     return sb.toString();\n"
                          + "  }\n"
                          + "}"));

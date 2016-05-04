@@ -24,7 +24,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.processor.FormatFlag;
-import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
+import com.github.imasahiro.stringformatter.runtime.integers.IntegerFormatter;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.google.common.collect.ImmutableMap;
@@ -61,8 +61,7 @@ public class IntegerFormatConversionType extends FormatConversionType {
     private static String convertFlags(Set<FormatFlag> flags) {
         // TODO Support left-justified.
         if (flags.contains(FormatFlag.ZERO)) {
-            return String.valueOf(
-                    IntegerFormatter.PADDED_WITH_ZEROS);
+            return String.valueOf(IntegerFormatter.PADDED_WITH_ZEROS);
         }
         return "0";
     }

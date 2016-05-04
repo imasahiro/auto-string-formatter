@@ -24,8 +24,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.processor.FormatFlag;
-import com.github.imasahiro.stringformatter.runtime.HexIntegerFormatter;
-import com.github.imasahiro.stringformatter.runtime.IntegerFormatter;
+import com.github.imasahiro.stringformatter.runtime.integers.HexIntegerFormatter;
+import com.github.imasahiro.stringformatter.runtime.integers.IntegerFormatter;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.google.common.collect.ImmutableMap;

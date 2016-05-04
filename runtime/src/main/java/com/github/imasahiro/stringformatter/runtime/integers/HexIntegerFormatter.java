@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.imasahiro.stringformatter.runtime;
+package com.github.imasahiro.stringformatter.runtime.integers;
 
 public class HexIntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
