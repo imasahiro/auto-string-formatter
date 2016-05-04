@@ -18,7 +18,7 @@ package com.github.imasahiro.stringformatter.runtime.integers;
 public class IntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
     private static final boolean ENSURE_CAPACITY = true;
-    private static final boolean DISABLE_INT_TO_ASCII_UNROLLING = true;
+    private static final boolean DISABLE_INT_TO_ASCII_UNROLLING = false;
 
     private static final char[] digits99 = {
             '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', '0', '5', '0', '6', '0', '7', '0', '8', '0', '9',
@@ -234,10 +234,10 @@ public class IntegerFormatter {
     }
 
     private static StringBuilder formatWithByteArray(StringBuilder sb, long val) {
-        char[] buf = new char[21];
         int len = IntegerUtils.log10(val);
-
+        char[] buf = new char[len];
         int index = len;
+
         while (val >= 100) {
             int idx = (int) (val % 100 * 2);
             buf[--index] = digits99[idx + 1];
