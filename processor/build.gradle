@@ -21,7 +21,8 @@ dependencies {
 publish {
     artifactId = 'string-formatter-processor'
     desc = 'An annotation processor for string-formatter to generate optimized String.format() methods'
-    groupId   = 'com.github.imasahiro'
+    userOrg = 'imasahiro'
+    groupId = 'com.github.imasahiro'
     publishVersion = project.version
     website = 'https://github.com/imasahiro/string-formatter'
     repository = 'git@github.com:imasahiro/string-formatter.git'
