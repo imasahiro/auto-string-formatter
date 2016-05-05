@@ -32,6 +32,9 @@ allprojects {
             uncommittedChanges = true
             aheadOfRemote = true
         }
+        tag {
+            prefix = 'string-formatter'
+        }
     }
     project.version = scmVersion.version
 }
