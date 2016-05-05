@@ -1,11 +1,9 @@
-apply plugin: "me.champeau.gradle.jmh"
-
-archivesBaseName = 'string-formatter-example'
+apply plugin: 'me.champeau.gradle.jmh'
 
 dependencies {
     apt project(':processor')
     compile project(':runtime')
-    compile 'javax.inject:javax.inject:1'
+    compileOnly 'javax.inject:javax.inject:1'
 }
 
 jmh {
