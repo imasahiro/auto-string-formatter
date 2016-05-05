@@ -28,8 +28,9 @@ allprojects {
     targetCompatibility = 1.8
 
     scmVersion {
-        tag {
-            prefix = 'string-formatter'
+        checks {
+            uncommittedChanges = true
+            aheadOfRemote = true
         }
     }
     project.version = scmVersion.version
