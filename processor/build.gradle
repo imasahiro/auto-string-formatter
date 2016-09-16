@@ -1,6 +1,6 @@
 apply plugin: 'com.novoda.bintray-release'
 
-archivesBaseName = 'string-formatter-processor'
+archivesBaseName = 'auto-string-formatter-processor'
 
 dependencies {
     compile project(':runtime')
@@ -19,12 +19,12 @@ dependencies {
 }
 
 publish {
-    artifactId = 'string-formatter-processor'
-    desc = 'An annotation processor for string-formatter to generate optimized String.format() methods'
+    artifactId = 'auto-string-formatter-processor'
+    desc = 'An annotation processor for auto-string-formatter to generate optimized String.format() methods'
     userOrg = 'imasahiro'
     groupId = 'com.github.imasahiro'
     publishVersion = project.version
-    website = 'https://github.com/imasahiro/string-formatter'
-    repository = 'git@github.com:imasahiro/string-formatter.git'
+    website = 'https://github.com/imasahiro/auto-string-formatter'
+    repository = 'git@github.com:imasahiro/auto-string-formatter.git'
     licences = ['Apache-2.0']
 }

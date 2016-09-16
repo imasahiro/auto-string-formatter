@@ -1,13 +1,13 @@
-# string-formatter
+# auto-string-formatter
 
-`string-formatter` is a string formatting library for Java, generating optimized formatter methods at compile time with annotation processing.
+`auto-string-formatter` is a string formatting library for Java, generating optimized formatter methods at compile time with annotation processing.
 
-`string-formatter` has the following features:
+`auto-string-formatter` has the following features:
 * Fast as hand-written code with `StringBuilder`.
 * (Mostly) compatible for `String.format`.
 
 ## Getting Started
-`string-formatter` requires JDK 8 (1.8.0_65 or later) to run annotation processors.
+`auto-string-formatter` requires JDK 8 (1.8.0_65 or later) to run annotation processors.
 
 ## Synopsis
 Just define a format with `@AutoStringFormatter` and `@Format`, and use it.
@@ -22,7 +22,7 @@ public class Example {
     @AutoStringFormatter
     interface Formatter {
         @Format("Hi %s, my name is %s.")
-            String formatTo(String myName, String frientName);
+            String formatTo(String friendName, String myName);
     }
 
     public static void main(String... args) {
@@ -31,7 +31,7 @@ public class Example {
 }
 ```
 
-Then the annotation processor generate following java code based on StringFormatter annotation.
+Then the annotation processor generate following java code based on AutoStringFormatter annotation.
 
 ```java
 package com.github.imasahiro.stringformatter.example;
