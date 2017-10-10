@@ -15,6 +15,8 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -45,8 +47,6 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
-import jp.skypencil.guava.stream.GuavaCollectors;
 
 @SupportedAnnotationTypes("com.github.imasahiro.stringformatter.*")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -139,7 +139,7 @@ public class StringFormatterProcessor extends AbstractProcessor {
                 MoreElements.getLocalAndInheritedMethods(element, processingEnv.getElementUtils()))
                 .stream()
                 .map(this::buildFormatterMethod)
-                .collect(GuavaCollectors.toImmutableList());
+                .collect(toImmutableList());
     }
 
     private FormatterMethod buildFormatterMethod(ExecutableElement method) {
@@ -149,8 +149,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
                               .formatter(fmt.value())
                               .bufferCapacity(fmt.capacity())
                               .argumentTypeNames(method.getParameters().stream()
-                                                 .map(Element::asType)
-                                                 .collect(GuavaCollectors.toImmutableList()))
+                                                       .map(Element::asType)
+                                                       .collect(toImmutableList()))
                               .element(method)
                               .errorReporter(errorReporter)
                               .build();
