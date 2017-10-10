@@ -5,15 +5,14 @@ archivesBaseName = 'auto-string-formatter-processor'
 dependencies {
     compile project(':runtime')
 
-    compile 'com.github.spullara.mustache.java:compiler:0.9.1'
-    compile 'com.google.auto:auto-common:0.5'
-    compile 'com.google.guava:guava:19.0'
-    compile 'com.squareup:javapoet:1.7.0'
+    compile 'com.github.spullara.mustache.java:compiler:0.9.5'
+    compile 'com.google.auto:auto-common:0.8'
+    compile 'com.google.guava:guava:23.1-jre'
+    compile 'com.squareup:javapoet:1.9.0'
     compile 'javax.inject:javax.inject:1'
-    compile 'jp.skypencil.guava:helper:1.0.1'
 
     testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
-    testCompile 'com.google.testing.compile:compile-testing:0.9'
+    testCompile 'com.google.testing.compile:compile-testing:0.12'
     testCompile 'javax.inject:javax.inject:1'
     testCompile 'junit:junit:4.12'
 }
