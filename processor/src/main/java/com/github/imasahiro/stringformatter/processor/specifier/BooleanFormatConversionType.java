@@ -42,16 +42,15 @@ public class BooleanFormatConversionType extends FormatConversionType {
 
     @Override
     public String emit(String arg, int width, int precision, Set<FormatFlag> flags, TypeMirror argumentType) {
-        ImmutableMap.Builder<String, Object> scopeBuilder = ImmutableMap.builder();
-        scopeBuilder.put("ARG", arg)
-                    .put("width", width)
-                    .put("TRUE", flags.contains(FormatFlag.UPPER_CASE) ? "TRUE" : "true")
-                    .put("FALSE", flags.contains(FormatFlag.UPPER_CASE) ? "FALSE" : "false");
+        ImmutableMap<String, Object> scopeBuilder = ImmutableMap.of(
+                "ARG", arg,
+                "width", width,
+                "TRUE", flags.contains(FormatFlag.UPPER_CASE) ? "TRUE" : "true",
+                "FALSE", flags.contains(FormatFlag.UPPER_CASE) ? "FALSE" : "false");
         if (width > Boolean.TRUE.toString().length()) {
-            return getCode(BOOLEAN_TEMPLATE_WITH_WIDTH, scopeBuilder.build());
-        }
-        else {
-            return getCode(BOOLEAN_TEMPLATE, scopeBuilder.build());
+            return getCode(BOOLEAN_TEMPLATE_WITH_WIDTH, scopeBuilder);
+        } else {
+            return getCode(BOOLEAN_TEMPLATE, scopeBuilder);
         }
     }
 }

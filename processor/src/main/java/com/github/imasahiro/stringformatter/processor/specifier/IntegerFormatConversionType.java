@@ -38,6 +38,14 @@ public class IntegerFormatConversionType extends FormatConversionType {
     private static final Mustache TEMPLATE_WIDTH =
             new DefaultMustacheFactory().compile("template/int_with_width.mustache");
 
+    private static String convertFlags(Set<FormatFlag> flags) {
+        // TODO Support left-justified.
+        if (flags.contains(FormatFlag.ZERO)) {
+            return String.valueOf(IntegerFormatter.PADDED_WITH_ZEROS);
+        }
+        return "0";
+    }
+
     @Override
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
         return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.SHORT),
@@ -56,13 +64,5 @@ public class IntegerFormatConversionType extends FormatConversionType {
             return getCode(TEMPLATE, ImmutableMap.of("ARG", arg));
         }
 
-    }
-
-    private static String convertFlags(Set<FormatFlag> flags) {
-        // TODO Support left-justified.
-        if (flags.contains(FormatFlag.ZERO)) {
-            return String.valueOf(IntegerFormatter.PADDED_WITH_ZEROS);
-        }
-        return "0";
     }
 }

@@ -44,6 +44,24 @@ public class StringFormatConversionType extends FormatConversionType {
     private static final Mustache FORMATTABLE_TEMPLATE =
             new DefaultMustacheFactory().compile("template/formattable.mustache");
 
+    private static String convertToFormattableFlags(Set<FormatFlag> flags) {
+        ImmutableList.Builder<Integer> flagBuilder = ImmutableList.builder();
+        if (flags.contains(FormatFlag.UPPER_CASE)) {
+            flagBuilder.add(FormattableFlags.UPPERCASE);
+        }
+        if (flags.contains(FormatFlag.SHARP)) {
+            flagBuilder.add(FormattableFlags.ALTERNATE);
+        }
+        if (flags.contains(FormatFlag.MINUS)) {
+            flagBuilder.add(FormattableFlags.LEFT_JUSTIFY);
+        }
+        ImmutableList<Integer> formatterFlags = flagBuilder.build();
+        if (formatterFlags.isEmpty()) {
+            formatterFlags = ImmutableList.of(0);
+        }
+        return Joiner.on("|").join(formatterFlags);
+    }
+
     @Override
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
         return ImmutableSet.of(elementUtil.getTypeElement(Formattable.class.getCanonicalName()).asType(),
@@ -63,23 +81,5 @@ public class StringFormatConversionType extends FormatConversionType {
         } else {
             return getCode(STRING_TEMPLATE, scope);
         }
-    }
-
-    private static String convertToFormattableFlags(Set<FormatFlag> flags) {
-        ImmutableList.Builder<Integer> flagBuilder = ImmutableList.builder();
-        if (flags.contains(FormatFlag.UPPER_CASE)) {
-            flagBuilder.add(FormattableFlags.UPPERCASE);
-        }
-        if (flags.contains(FormatFlag.SHARP)) {
-            flagBuilder.add(FormattableFlags.ALTERNATE);
-        }
-        if (flags.contains(FormatFlag.MINUS)) {
-            flagBuilder.add(FormattableFlags.LEFT_JUSTIFY);
-        }
-        ImmutableList<Integer> formatterFlags = flagBuilder.build();
-        if (formatterFlags.isEmpty()) {
-            formatterFlags = ImmutableList.of(0);
-        }
-        return Joiner.on("|").join(formatterFlags);
     }
 }

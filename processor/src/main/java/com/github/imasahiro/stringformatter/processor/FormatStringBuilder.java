@@ -45,6 +45,75 @@ class FormatStringBuilder {
         this.errorReporter = errorReporter;
     }
 
+    // "(\\d+\\$)" -> index
+    private static int parseIndex(int index, String s, int start, int end) {
+        if (start < 0) {
+            return index;
+        }
+        return Ints.tryParse(s.substring(start, end - 1));
+    }
+
+    // "([-#+ 0,(\\<]*)" -> [MINUS, SHARP, PLUS, ZERO, ...]
+    private static Set<FormatFlag> parseFlags(String s, int start, int end) {
+        Set<FormatFlag> flags = new HashSet<>();
+        if (start < 0) {
+            return flags;
+        }
+        for (int i = start; i < end; i++) {
+            switch (s.charAt(i)) {
+                case '-':
+                    flags.add(FormatFlag.MINUS);
+                    break;
+                case '#':
+                    flags.add(FormatFlag.SHARP);
+                    break;
+                case '+':
+                    flags.add(FormatFlag.PLUS);
+                    break;
+                case ' ':
+                    flags.add(FormatFlag.SPACE);
+                    break;
+                case '0':
+                    flags.add(FormatFlag.ZERO);
+                    break;
+                case ',':
+                    flags.add(FormatFlag.COMMA);
+                    break;
+                case '(':
+                    flags.add(FormatFlag.PARENTHESIS);
+                    break;
+                case '<':
+                    break;
+            }
+        }
+        return flags;
+    }
+
+    // (\\d+)
+    private static int parseWidth(String s, int start, int end) {
+        if (start < 0) {
+            return -1;
+        }
+        return Ints.tryParse(s.substring(start, end));
+    }
+
+    // "(\\.\\d+)"
+    private static int parsePrecision(String s, int start, int end) {
+        if (start < 0) {
+            return -1;
+        }
+        return Ints.tryParse(s.substring(start + 1, end));
+    }
+
+    // "([a-zA-Z%])"
+    private static char parseConversion(String s, int index, Set<FormatFlag> flags) {
+        char c = s.charAt(index);
+        if (flags.contains(FormatFlag.TIME)) {
+            throw new RuntimeException("Time conversion is not implemented");
+        }
+        return c;
+    }
+
     FormatStringBuilder format(String format) {
         this.format = format;
         return this;
@@ -149,74 +218,5 @@ class FormatStringBuilder {
         if (condition) {
             errorReporter.fatal(message, element);
         }
-    }
-
-    // "(\\d+\\$)" -> index
-    private static int parseIndex(int index, String s, int start, int end) {
-        if (start < 0) {
-            return index;
-        }
-        return Ints.tryParse(s.substring(start, end - 1));
-    }
-
-    // "([-#+ 0,(\\<]*)" -> [MINUS, SHARP, PLUS, ZERO, ...]
-    private static Set<FormatFlag> parseFlags(String s, int start, int end) {
-        Set<FormatFlag> flags = new HashSet<>();
-        if (start < 0) {
-            return flags;
-        }
-        for (int i = start; i < end; i++) {
-            switch (s.charAt(i)) {
-            case '-':
-                flags.add(FormatFlag.MINUS);
-                break;
-            case '#':
-                flags.add(FormatFlag.SHARP);
-                break;
-            case '+':
-                flags.add(FormatFlag.PLUS);
-                break;
-            case ' ':
-                flags.add(FormatFlag.SPACE);
-                break;
-            case '0':
-                flags.add(FormatFlag.ZERO);
-                break;
-            case ',':
-                flags.add(FormatFlag.COMMA);
-                break;
-            case '(':
-                flags.add(FormatFlag.PARENTHESIS);
-                break;
-            case '<':
-                break;
-            }
-        }
-        return flags;
-    }
-
-    // (\\d+)
-    private static int parseWidth(String s, int start, int end) {
-        if (start < 0) {
-            return -1;
-        }
-        return Ints.tryParse(s.substring(start, end));
-    }
-
-    // "(\\.\\d+)"
-    private static int parsePrecision(String s, int start, int end) {
-        if (start < 0) {
-            return -1;
-        }
-        return Ints.tryParse(s.substring(start + 1, end));
-    }
-
-    // "([a-zA-Z%])"
-    private static char parseConversion(String s, int index, Set<FormatFlag> flags) {
-        char c = s.charAt(index);
-        if (flags.contains(FormatFlag.TIME)) {
-            throw new RuntimeException("Time conversion is not implemented");
-        }
-        return c;
     }
 }

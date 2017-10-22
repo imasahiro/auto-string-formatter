@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class HexIntegerFormatterTest {
-   private static String run(long i, int width, boolean printZero) {
+    private static String run(long i, int width, boolean printZero) {
         StringBuilder sb = new StringBuilder();
         HexIntegerFormatter.formatTo(sb, i, printZero ? HexIntegerFormatter.PADDED_WITH_ZEROS : 0, width);
         return sb.toString();

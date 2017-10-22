@@ -52,32 +52,17 @@ import com.squareup.javapoet.TypeSpec;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class StringFormatterProcessor extends AbstractProcessor {
 
-    private static class SourceData {
-        private final PackageElement packageElement;
-        private final String packageName;
-        private final String className;
-
-        SourceData(PackageElement packageElement, TypeElement typeElement) {
-            this.packageElement = packageElement;
-            packageName = packageElement.getQualifiedName().toString();
-            className = TypeUtils.generateClassName(typeElement);
-        }
-
-        String getSourceName() {
-            return packageElement + "." + className;
-        }
-
-        String getPackageName() {
-            return packageName;
-        }
-
-        String getClassName() {
-            return className;
-        }
-    }
-
     private static final TypeName JAVA_LANG_STRING = TypeName.get(String.class);
     private ErrorReporter errorReporter;
+
+    private static List<ExecutableElement> filterFormatAnnotatedMethods(Set<ExecutableElement> methods) {
+        ImmutableList.Builder<ExecutableElement> targetMethods = ImmutableList.builder();
+        methods.stream()
+               .filter(method -> JAVA_LANG_STRING.equals(TypeName.get(method.getReturnType())) &&
+                                 method.getAnnotation(Format.class) != null)
+               .forEach(targetMethods::add);
+        return targetMethods.build();
+    }
 
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
@@ -97,7 +82,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
                                                         .build();
                             javaFile.writeTo(writer);
                         } catch (IOException ignored) {
-                            errorReporter.fatal("Cannot write java file to " + source.getSourceName(), typeElement);
+                            errorReporter.fatal("Cannot write java file to " + source.getSourceName(),
+                                                typeElement);
                         }
                     });
             return true;
@@ -106,7 +92,8 @@ public class StringFormatterProcessor extends AbstractProcessor {
         return false;
     }
 
-    private TypeSpec buildClass(TypeElement superInterface, String className, List<FormatterMethod> formatterMethodList) {
+    private TypeSpec buildClass(TypeElement superInterface, String className,
+                                List<FormatterMethod> formatterMethodList) {
         TypeSpec.Builder builder =
                 TypeSpec.classBuilder(className)
                         .addSuperinterface(TypeName.get(superInterface.asType()))
@@ -117,15 +104,6 @@ public class StringFormatterProcessor extends AbstractProcessor {
                         .addAnnotation(AnnotationSpec.builder(Named.class).build());
         formatterMethodList.forEach(formatter -> builder.addMethod(formatter.getMethod(processingEnv)));
         return builder.build();
-    }
-
-    private static List<ExecutableElement> filterFormatAnnotatedMethods(Set<ExecutableElement> methods) {
-        ImmutableList.Builder<ExecutableElement> targetMethods = ImmutableList.builder();
-        methods.stream()
-               .filter(method -> JAVA_LANG_STRING.equals(TypeName.get(method.getReturnType())) &&
-                                 method.getAnnotation(Format.class) != null)
-               .forEach(targetMethods::add);
-        return targetMethods.build();
     }
 
     private List<FormatterMethod> buildFormatterMethods(TypeElement element) {
@@ -154,5 +132,29 @@ public class StringFormatterProcessor extends AbstractProcessor {
                               .element(method)
                               .errorReporter(errorReporter)
                               .build();
+    }
+
+    private static class SourceData {
+        private final PackageElement packageElement;
+        private final String packageName;
+        private final String className;
+
+        SourceData(PackageElement packageElement, TypeElement typeElement) {
+            this.packageElement = packageElement;
+            packageName = packageElement.getQualifiedName().toString();
+            className = TypeUtils.generateClassName(typeElement);
+        }
+
+        String getSourceName() {
+            return packageElement + "." + className;
+        }
+
+        String getPackageName() {
+            return packageName;
+        }
+
+        String getClassName() {
+            return className;
+        }
     }
 }

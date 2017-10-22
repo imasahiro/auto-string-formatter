@@ -17,8 +17,6 @@
 package com.github.imasahiro.stringformatter.runtime.integers;
 
 final class IntegerUtils {
-    private IntegerUtils() {}
-
     private static final long[] powersOf10 = {
             1L,
             10L,
@@ -41,13 +39,14 @@ final class IntegerUtils {
             1000000000000000000L,
             Long.MAX_VALUE
     };
-
     // maxLog10ForLeadingZeros[i] == floor(log10(2^(Long.SIZE - i)))
     private static final byte[] maxLog10ForLeadingZeros = {
             19, 18, 18, 18, 18, 17, 17, 17, 16, 16, 16, 15, 15, 15, 15, 14, 14, 14, 13, 13, 13, 12, 12,
             12, 12, 11, 11, 11, 10, 10, 10, 9, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 4, 4, 4,
             3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0
     };
+
+    private IntegerUtils() {}
 
     public static int log2(long v) {
         if (v != 0) {

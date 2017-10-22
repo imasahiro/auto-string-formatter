@@ -27,16 +27,15 @@ import com.github.imasahiro.stringformatter.processor.FormatFlag;
 import com.github.mustachejava.Mustache;
 
 public abstract class FormatConversionType {
-    public abstract Set<TypeMirror> getType(Types typeUtil, Elements elementUtil);
-
-    public String emit(String arg, int width, int precision,
-                       Set<FormatFlag> flags, TypeMirror argumentType) {
-        return "sb.append(" + arg + ");\n";
-    }
-
-    protected static String getCode(Mustache template, Map<String, ?> scope) {
+    static String getCode(Mustache template, Map<String, ?> scope) {
         StringWriter sw = new StringWriter();
         template.execute(sw, scope);
         return sw.toString();
+    }
+
+    public abstract Set<TypeMirror> getType(Types typeUtil, Elements elementUtil);
+
+    public String emit(String arg, int width, int precision, Set<FormatFlag> flags, TypeMirror argumentType) {
+        return "sb.append(" + arg + ");\n";
     }
 }

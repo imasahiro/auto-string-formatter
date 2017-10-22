@@ -27,6 +27,34 @@ public class IntegerStringifyBench {
             new IntegerStringifyBenchFormatter_Formatter();
     private static final Supplier<Integer> integerSupplier = () -> ThreadLocalRandom.current().nextInt();
 
+    private static String stringBuilder(int a, int b, int c, int d) {
+        return new StringBuilder()
+                .append(a)
+                .append(" + ")
+                .append(b)
+                .append(" * ")
+                .append(c)
+                .append(" = ")
+                .append(d)
+                .toString();
+    }
+
+    private static String javaStringConcat(int a, int b, int c, int d) {
+        String s = "";
+        s += a;
+        s += " + ";
+        s += b;
+        s += " * ";
+        s += c;
+        s += " = ";
+        s += d;
+        return s;
+    }
+
+    private static String javaStringFormat(String formatString, int a, int b, int c, int d) {
+        return String.format(formatString, a, b, c, d);
+    }
+
     @Benchmark
     public void javaStringFormat(Blackhole blackhole) {
         blackhole.consume(javaStringFormat(IntegerStringifyBenchFormatter.FORMAT,
@@ -58,33 +86,5 @@ public class IntegerStringifyBench {
                                            integerSupplier.get(),
                                            integerSupplier.get(),
                                            integerSupplier.get()));
-    }
-
-    private static String stringBuilder(int a, int b, int c, int d) {
-        return new StringBuilder()
-                .append(a)
-                .append(" + ")
-                .append(b)
-                .append(" * ")
-                .append(c)
-                .append(" = ")
-                .append(d)
-                .toString();
-    }
-
-    private static String javaStringConcat(int a, int b, int c, int d) {
-        String s = "";
-        s += a;
-        s += " + ";
-        s += b;
-        s += " * ";
-        s += c;
-        s += " = ";
-        s += d;
-        return s;
-    }
-
-    private static String javaStringFormat(String formatString, int a, int b, int c, int d) {
-        return String.format(formatString, a, b, c, d);
     }
 }

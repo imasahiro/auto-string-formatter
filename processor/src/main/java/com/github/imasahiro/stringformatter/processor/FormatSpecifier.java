@@ -31,7 +31,7 @@ class FormatSpecifier implements FormatString {
     private final FormatConversionType type;
 
     FormatSpecifier(int index, int width, int precision, Set<FormatFlag> flags,
-                            FormatConversionType type) {
+                    FormatConversionType type) {
         this.index = index;
         this.width = width;
         this.precision = precision;

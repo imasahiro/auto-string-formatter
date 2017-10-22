@@ -49,7 +49,7 @@ public class HexIntegerFormatter {
         len *= 4;
         do {
             len -= 4;
-            sb.append(Character.forDigit((int)(val >> len) & 0xf, 16));
+            sb.append(Character.forDigit((int) (val >> len) & 0xf, 16));
         } while (len != 0);
         return sb;
     }

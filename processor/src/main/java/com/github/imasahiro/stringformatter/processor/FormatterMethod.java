@@ -15,6 +15,8 @@
  */
 package com.github.imasahiro.stringformatter.processor;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +27,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.squareup.javapoet.CodeBlock;
@@ -60,17 +61,20 @@ class FormatterMethod {
         return builder.build();
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     private CodeBlock buildBody(List<FormatString> formatStringList, List<TypeMirror> argumentTypes) {
         CodeBlock.Builder builder = CodeBlock.builder()
                                              .add("final StringBuilder sb = new StringBuilder(" +
                                                   bufferCapacity + ");\n");
         int idx = 0;
-        for (int i = 0; i < formatStringList.size(); i++) {
-            FormatString formatString = formatStringList.get(i);
+        for (FormatString formatString : formatStringList) {
             if (formatString instanceof FormatSpecifier) {
-                formatStringList.get(i).emit(builder, argumentTypes.get(idx++));
+                formatString.emit(builder, argumentTypes.get(idx++));
             } else {
-                formatStringList.get(i).emit(builder, null);
+                formatString.emit(builder, null);
             }
         }
         return builder.add("return sb.toString();\n")
@@ -79,21 +83,23 @@ class FormatterMethod {
 
     private void checkArgumentTypes(ProcessingEnvironment processingEnv, List<FormatString> formatStringList,
                                     List<TypeMirror> expectedTypeList) {
-        List<FormatSpecifier> formatSpecifiers = FluentIterable.from(formatStringList)
-                                                               .filter(FormatSpecifier.class)
-                                                               .toList();
+        List<FormatSpecifier> formatSpecifiers = formatStringList.stream()
+                                                                 .filter(FormatSpecifier.class::isInstance)
+                                                                 .map(FormatSpecifier.class::cast)
+                                                                 .collect(toImmutableList());
 
         if (formatSpecifiers.size() != expectedTypeList.size()) {
             throw new RuntimeException(name + " cannot not acceptable to " + expectedTypeList);
         }
 
         Set<List<TypeMirror>> candidateArgumentTypes = Sets.cartesianProduct(
-                FluentIterable.from(formatSpecifiers)
-                              .transform(e -> e.getConversionType().getType(processingEnv.getTypeUtils(),
-                                                                            processingEnv.getElementUtils()))
-                              .toList());
+                formatSpecifiers.stream()
+                                .map(FormatSpecifier::getConversionType)
+                                .map(e -> e.getType(processingEnv.getTypeUtils(),
+                                                    processingEnv.getElementUtils()))
+                                .collect(toImmutableList()));
 
-        if (!candidateArgumentTypes.stream().anyMatch(
+        if (candidateArgumentTypes.stream().noneMatch(
                 candidate -> isAssignableArguments(processingEnv, candidate, expectedTypeList))) {
             errorReporter.fatal(name + " cannot not apply to " + expectedTypeList, element);
         }
@@ -126,10 +132,6 @@ class FormatterMethod {
     public String toString() {
         return "FormatterMethod(name:" + name + ", format:" + format
                + ", bufferCapacity:" + bufferCapacity + ")";
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     static class Builder {

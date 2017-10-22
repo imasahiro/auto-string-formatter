@@ -20,15 +20,15 @@ import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
 public class FormatHexId {
-    @AutoStringFormatter
-    interface Formatter {
-        @Format(value = "%016x%016x", capacity = 32)
-        String formatTo(long upper, long lower);
-    }
-
     public static void main(String... args) {
         long upperId = 0x0123456789abcdefL;
         long lowerId = 0x0123456789abcdefL;
         System.out.println(new FormatHexId_Formatter().formatTo(upperId, lowerId));
+    }
+
+    @AutoStringFormatter
+    interface Formatter {
+        @Format(value = "%016x%016x", capacity = 32)
+        String formatTo(long upper, long lower);
     }
 }
