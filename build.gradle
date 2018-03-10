@@ -5,10 +5,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.novoda:bintray-release:0.5.0'
-        classpath 'gradle.plugin.me.champeau.gradle:jmh-gradle-plugin:0.3.0'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.12'
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.8.1'
+        classpath 'com.novoda:bintray-release:0.8.0'
+        classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.5'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.15'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.9.0'
     }
 }
 
