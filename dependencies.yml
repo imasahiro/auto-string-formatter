@@ -1,0 +1,46 @@
+com.google.guava:
+  guava:
+    version: &GUAVA_VERSION '24.0-jre'
+  guava-testlib:
+    version: *GUAVA_VERSION
+
+com.google.auto:
+  auto-common: { version: '0.10' }
+
+com.google.testing.compile:
+  compile-testing: { version: '0.15' }
+
+com.github.spullara.mustache.java:
+  compiler: { version: '0.9.5' }
+
+com.puppycrawl.tools:
+  checkstyle: { version: '8.8' }
+
+com.squareup:
+  javapoet: { version: '1.10.0' }
+
+gradle.plugin.net.davidecavestro:
+  gradle-jxr-plugin: { version: 0.2.1 }
+
+it.unimi.dsi:
+  fastutil:
+    version: '8.1.1'
+    relocations:
+    - from: it.unimi.dsi.fastutil
+      to: com.linecorp.armeria.internal.shaded.fastutil
+
+javax.inject:
+  javax.inject: { version: '1' }
+
+junit:
+  junit: { version: '4.12' }
+
+me.champeau.gradle:
+  jmh-gradle-plugin: { version: '0.4.5' }
+
+org.assertj:
+  assertj-core: { version: '3.9.1' }
+
+org.openjdk.jmh:
+  jmh-core: { version: &JMH_VERSION '1.20' }
+  jmh-generator-annprocess: { version: *JMH_VERSION }
