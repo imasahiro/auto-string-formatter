@@ -21,13 +21,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An annotation to specify the string format. A simple example:
+ * <pre>{@code
+ * &#64;AutoStringFormatter
+ * interface IdFormatter {
+ *     &#64;Format("id%08d")
+ *     String formatTo(int id);
+ * }
+ * }</pre>
+ */
 @Target(METHOD)
 @Retention(RetentionPolicy.SOURCE)
 public @interface Format {
-    // format string.
+    /**
+     *  Format string. See <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html#syntax">
+     *  format syntax</a> for format string syntax.
+     */
     String value();
 
-    // The initial capacity of a buffer.
-    // Default capacity is the Default capacity of StringBuilder's buffer.
+    /**
+     * The initial capacity of a buffer. Default is the default capacity of {@link StringBuilder} buffer
+     * ({@code 16}).
+     */
     int capacity() default 16;
 }

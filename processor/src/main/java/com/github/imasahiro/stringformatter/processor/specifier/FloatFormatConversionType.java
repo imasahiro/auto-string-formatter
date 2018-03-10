@@ -23,7 +23,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import com.github.imasahiro.stringformatter.processor.FormatFlag;
 import com.google.common.collect.ImmutableSet;
 
 public class FloatFormatConversionType extends FormatConversionType {
@@ -31,10 +30,5 @@ public class FloatFormatConversionType extends FormatConversionType {
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
         return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.FLOAT),
                                typeUtil.getPrimitiveType(TypeKind.DOUBLE));
-    }
-
-    @Override
-    public String emit(String arg, int width, int precision, Set<FormatFlag> flags, TypeMirror argumentType) {
-        return "sb.append(" + arg + ");\n";
     }
 }

@@ -63,6 +63,5 @@ public class IntegerFormatConversionType extends FormatConversionType {
         } else {
             return getCode(TEMPLATE, ImmutableMap.of("ARG", arg));
         }
-
     }
 }

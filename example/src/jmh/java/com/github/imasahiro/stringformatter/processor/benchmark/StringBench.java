@@ -27,22 +27,6 @@ public class StringBench {
     private static final StringBenchFormatter.Formatter formatter = new StringBenchFormatter_Formatter();
     private static final Supplier<Integer> integerSupplier = () -> ThreadLocalRandom.current().nextInt();
 
-    private static String stringBuilder(int i, int j) {
-        StringBuilder bldString = new StringBuilder("Hi ");
-        bldString.append(i);
-        bldString.append("; Hi to you ");
-        bldString.append(j);
-        return bldString.toString();
-    }
-
-    private static String javaStringConcat(int i, int j) {
-        String s = "Hi ";
-        s += i;
-        s += "; Hi to you ";
-        s += j;
-        return s;
-    }
-
     private static String javaStringFormat(String formatString, int i, int j) {
         return String.format(formatString, i, j);
     }
@@ -54,10 +38,26 @@ public class StringBench {
                                            integerSupplier.get()));
     }
 
+    private static String javaStringConcat(int i, int j) {
+        String s = "Hi ";
+        s += i;
+        s += "; Hi to you ";
+        s += j;
+        return s;
+    }
+
     @Benchmark
     public void javaStringConcat(Blackhole blackhole) {
         blackhole.consume(javaStringConcat(integerSupplier.get(),
                                            integerSupplier.get()));
+    }
+
+    private static String stringBuilder(int i, int j) {
+        StringBuilder bldString = new StringBuilder("Hi ");
+        bldString.append(i);
+        bldString.append("; Hi to you ");
+        bldString.append(j);
+        return bldString.toString();
     }
 
     @Benchmark

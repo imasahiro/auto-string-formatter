@@ -23,17 +23,11 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import com.github.imasahiro.stringformatter.processor.FormatFlag;
 import com.google.common.collect.ImmutableSet;
 
 public class CharacterFormatConversionType extends FormatConversionType {
     @Override
     public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
         return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.CHAR));
-    }
-
-    @Override
-    public String emit(String arg, int width, int precision, Set<FormatFlag> flags, TypeMirror argumentType) {
-        return "sb.append(" + arg + ");\n";
     }
 }

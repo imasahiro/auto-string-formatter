@@ -18,10 +18,7 @@ package com.github.imasahiro.stringformatter.processor.specifier;
 
 import java.util.Set;
 
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
 import com.github.imasahiro.stringformatter.processor.FormatFlag;
 import com.github.imasahiro.stringformatter.runtime.integers.HexIntegerFormatter;
@@ -29,7 +26,6 @@ import com.github.imasahiro.stringformatter.runtime.integers.IntegerFormatter;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 public class HexIntegerFormatConversionType extends IntegerFormatConversionType {
     private static final String FORMATTER_NAME = HexIntegerFormatter.class.getCanonicalName();
@@ -44,13 +40,6 @@ public class HexIntegerFormatConversionType extends IntegerFormatConversionType 
                     IntegerFormatter.PADDED_WITH_ZEROS);
         }
         return "0";
-    }
-
-    @Override
-    public Set<TypeMirror> getType(Types typeUtil, Elements elementUtil) {
-        return ImmutableSet.of(typeUtil.getPrimitiveType(TypeKind.SHORT),
-                               typeUtil.getPrimitiveType(TypeKind.INT),
-                               typeUtil.getPrimitiveType(TypeKind.LONG));
     }
 
     @Override

@@ -19,8 +19,13 @@ package com.github.imasahiro.stringformatter.processor.benchmark;
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
-public class IntegerStringifyBenchFormatter {
+/**
+ * Definition of formatter for benchmarking integer to string.
+ */
+public final class IntegerStringifyBenchFormatter {
     public static final String FORMAT = "%d + %d * %d = %d";
+
+    private IntegerStringifyBenchFormatter() {}
 
     @AutoStringFormatter
     interface Formatter {

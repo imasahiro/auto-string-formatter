@@ -167,5 +167,4 @@ public class HexIntegerFormatterTest {
         assertEquals(String.format("%030x", -12L), run(-12L, 30, true));
         assertEquals(String.format("%030x", -1L), run(-1L, 30, true));
     }
-
 }

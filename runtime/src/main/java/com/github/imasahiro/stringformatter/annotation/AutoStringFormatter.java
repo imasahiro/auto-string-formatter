@@ -20,6 +20,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An annotation to be applied to elements for which a string formatter should be automatically generated.
+ * Specifies that {@link AutoStringFormatter} should generate an implementation class for the annotated
+ * interface, implementing the string formatter specified by {@link Format} annotation. A simple example:
+ * <pre>{@code
+ * &#64;AutoStringFormatter
+ * interface IdFormatter {
+ *     &#64;Format("id%08d")
+ *     String formatTo(int id);
+ * }
+ * }</pre>
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface AutoStringFormatter {

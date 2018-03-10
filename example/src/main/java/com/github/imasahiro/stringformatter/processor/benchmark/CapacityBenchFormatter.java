@@ -19,8 +19,13 @@ package com.github.imasahiro.stringformatter.processor.benchmark;
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
-public class CapacityBenchFormatter {
+/**
+ * Definition formatters to benchmark with/without capacity.
+ */
+public final class CapacityBenchFormatter {
     public static final String FORMAT = "%32d%32d%32d%32d%32d%32d";
+
+    private CapacityBenchFormatter() {}
 
     @AutoStringFormatter
     interface Formatter {

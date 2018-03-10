@@ -130,8 +130,8 @@ class FormatterMethod {
 
     @Override
     public String toString() {
-        return "FormatterMethod(name:" + name + ", format:" + format
-               + ", bufferCapacity:" + bufferCapacity + ")";
+        return "FormatterMethod(name:" + name + ", format:" + format +
+               ", bufferCapacity:" + bufferCapacity + ')';
     }
 
     static class Builder {
@@ -175,6 +175,5 @@ class FormatterMethod {
         public FormatterMethod build() {
             return new FormatterMethod(name, format, bufferCapacity, argumentTypes, element, errorReporter);
         }
-
     }
 }

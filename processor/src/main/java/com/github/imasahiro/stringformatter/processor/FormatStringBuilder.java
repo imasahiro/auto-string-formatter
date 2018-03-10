@@ -16,7 +16,7 @@
 
 package com.github.imasahiro.stringformatter.processor;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -55,7 +55,7 @@ class FormatStringBuilder {
 
     // "([-#+ 0,(\\<]*)" -> [MINUS, SHARP, PLUS, ZERO, ...]
     private static Set<FormatFlag> parseFlags(String s, int start, int end) {
-        Set<FormatFlag> flags = new HashSet<>();
+        Set<FormatFlag> flags = EnumSet.noneOf(FormatFlag.class);
         if (start < 0) {
             return flags;
         }

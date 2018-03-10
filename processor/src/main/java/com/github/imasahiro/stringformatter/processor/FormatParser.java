@@ -24,12 +24,14 @@ import javax.lang.model.element.Element;
 
 import com.github.imasahiro.stringformatter.processor.util.ErrorReporter;
 
-public class FormatParser {
+final class FormatParser {
     // %[index][flags][width][.precision][t]conversion
     private static final String FORMAT_SPECIFIER =
             "%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])";
 
     private static final Pattern FORMAT_SPECIFIER_PATTERN = Pattern.compile(FORMAT_SPECIFIER);
+
+    private FormatParser() {}
 
     /**
      * Parse format specifiers in the format string.
@@ -39,7 +41,7 @@ public class FormatParser {
         Matcher m = FORMAT_SPECIFIER_PATTERN.matcher(fmt);
         int index = 0;
         FormatStringBuilder formatStringBuilder = new FormatStringBuilder(element, errorReporter);
-        for (int i = 0; i < fmt.length(); ) {
+        for (int i = 0; i < fmt.length();) {
             if (m.find(i)) {
                 if (m.start() != i) {
                     formatStrings.add(formatStringBuilder.newFixedString(fmt, i, m.start()));
