@@ -1,0 +1,191 @@
+import groovy.xml.QName
+
+configure(projectsWithFlags('bom')) {
+    apply plugin: 'base'
+
+    dependencyManagement {
+        generatedPomCustomization {
+            enabled = true
+        }
+    }
+
+    publishing {
+        publications {
+            bom(MavenPublication) {
+                artifactId project.ext.artifactId
+                pom.packaging = 'pom'
+                // Generate the POM.
+                pom.withXml {
+                    findChildNode(asNode(), 'packaging') + {
+                        resolveStrategy = DELEGATE_FIRST
+
+                        // Write the elements required by OSSRH.
+                        name "${project.ext.projectName} (${project.ext.artifactId})"
+                        description "${project.ext.projectDescription} (${project.ext.artifactId})"
+                        url "${project.ext.projectUrl}"
+                        inceptionYear "${project.ext.inceptionYear}"
+
+                        licenses {
+                            license {
+                                name "${project.ext.licenseName}"
+                                url "${project.ext.licenseUrl}"
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                name "${project.ext.authorName}"
+                                email "${project.ext.authorEmail}"
+                                url "${project.ext.authorUrl}"
+                            }
+                        }
+
+                        scm {
+                            url "${project.ext.scmUrl}"
+                            connection "${project.ext.scmConnection}"
+                            developerConnection "${project.ext.scmDeveloperConnection}"
+                        }
+                    }
+
+                    // Find (or create) the 'dependencyManagement' section.
+                    Node dependencyMgmt = findChildNode(asNode(), 'dependencyManagement')
+                    if (dependencyMgmt == null) {
+                        findChildNode(asNode(), 'scm') + {
+                            resolveStrategy = DELEGATE_FIRST
+                            dependencyManagement {
+                                dependencies {
+                                    deleteMe {} // Placeholder to use the Node.plus(Closure)
+                                }
+                            }
+                        }
+                        dependencyMgmt = findChildNode(asNode(), 'dependencyManagement')
+                    }
+
+                    // Add our own projects to the 'dependencies' sections.
+                    List<Node> dependencies = findChildNode(dependencyMgmt, 'dependencies').children()
+                    dependencies.last() + {
+                        resolveStrategy = DELEGATE_FIRST
+                        projectsWithFlags('java', 'publish').each { Project p ->
+                            dependency {
+                                groupId "${p.group}"
+                                artifactId "${p.ext.artifactId}"
+                                version "${p.version}"
+                            }
+                            if (p.hasFlags('relocate')) {
+                                dependency {
+                                    groupId "${p.group}"
+                                    artifactId "${p.ext.artifactId}-shaded"
+                                    version "${p.version}"
+                                }
+                            }
+                        }
+                    }
+
+                    // Remove the 'deleteMe' placeholder we added above.
+                    dependencies.removeIf {
+                        def name = it.name()
+                        if (name instanceof QName) {
+                            name = name.localPart
+                        } else {
+                            name = name.toString()
+                        }
+
+                        return name == 'deleteMe'
+                    }
+
+                    // Sort the dependencies for aesthetics.
+                    dependencies.sort { a, b ->
+                        // BOM import comes first.
+                        def scopeNodeA = findChildNode(a, 'scope')
+                        def scopeNodeB = findChildNode(b, 'scope')
+                        def scopeA = scopeNodeA != null ? scopeNodeA.text() : ''
+                        def scopeB = scopeNodeB != null ? scopeNodeB.text() : ''
+                        if (scopeA == 'import') {
+                            if (scopeB != 'import') {
+                                return -1
+                            }
+                        } else if (scopeB == 'import') {
+                            return 1
+                        }
+
+                        // Our own group comes first.
+                        def groupA = findChildNode(a, 'groupId').text()
+                        def groupB = findChildNode(b, 'groupId').text()
+                        if (groupA == rootProject.group) {
+                            if (groupB != rootProject.group) {
+                                return -1
+                            }
+                        } else if (groupB == rootProject.group) {
+                            return 1
+                        }
+
+                        // Sort by groupId alphabetically otherwise.
+                        def groupComparison = groupA.compareTo(groupB)
+                        if (groupComparison != 0) {
+                            return groupComparison
+                        }
+
+                        // Sort by artifactId.
+                        def artifactA = findChildNode(a, 'artifactId').text()
+                        def artifactB = findChildNode(b, 'artifactId').text()
+                        return artifactA.compareTo(artifactB);
+                    }
+                }
+
+                if (project.ext.isSigning()) {
+                    // Add the signature to pom.xml.
+                    pom.withXml {
+                        def outDir = project.file("${project.buildDir}/publications/bom")
+                        def pomFile = new File(outDir, 'pom-default.xml')
+                        def pomAscFile = new File(outDir, "${pomFile.name}.asc")
+
+                        writeTo(pomFile)
+
+                        def actualPomAscFile = signing.sign(pomFile).signatureFiles[0]
+                        if (actualPomAscFile != pomAscFile) {
+                            if (!actualPomAscFile.renameTo(pomAscFile)) {
+                                throw new IllegalStateException("failed to rename ${actualPomAscFile} to ${pomAscFile}")
+                            }
+                        }
+
+                        artifact(pomAscFile) {
+                            classifier = null
+                            extension = 'pom.asc'
+                        }
+
+                        // NB: No idea why, but Gradle does not publish an artifact when it's the only artifact
+                        // in a publication. We add /dev/null as a placeholder artifact to work around this
+                        // problem. However, this will not work on a non-UNIX which does not have /dev/null.
+                        def devNull = new File('/dev/null')
+                        if (!devNull.exists() || devNull.isFile() || devNull.isDirectory()) {
+                            throw new IllegalStateException('Cannot publish a BOM without /dev/null; try on UNIX.')
+                        }
+
+                        artifact(devNull) {
+                            classifier = null
+                            extension = '_'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    tasks.assemble.dependsOn {
+        tasks.generatePomFileForBomPublication
+    }
+}
+
+private static Node findChildNode(Node parent, String childName) {
+    return parent.children().find {
+        def name = it.name()
+        if (name instanceof QName) {
+            name = name.localPart
+        } else {
+            name = name.toString()
+        }
+
+        return name == childName
+    } as Node
+}

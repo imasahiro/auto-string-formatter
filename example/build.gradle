@@ -1,9 +1,11 @@
+apply plugin: 'net.ltgt.apt-idea'
+apply plugin: 'net.ltgt.apt-eclipse'
 apply plugin: 'me.champeau.gradle.jmh'
 
 dependencies {
     annotationProcessor project(':processor')
     compile project(':runtime')
-    compileOnly 'javax.inject:javax.inject:1'
+    compileOnly 'javax.inject:javax.inject'
 }
 
 jmh {

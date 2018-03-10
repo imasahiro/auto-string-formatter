@@ -1,2 +1,10 @@
-include 'runtime' , 'processor'
-include 'example'
+rootProject.name = 'auto-string-formatter'
+
+apply from: "${rootDir}/gradle/scripts/settings-flags.gradle"
+
+// Published Java projects
+includeWithFlags ':processor', 'java'
+includeWithFlags ':runtime',   'java'
+
+// Unpublished Java projects
+includeWithFlags ':example', 'java'
