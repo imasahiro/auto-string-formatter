@@ -15,21 +15,35 @@
  */
 package com.github.imasahiro.stringformatter.runtime.integers;
 
-public class HexIntegerFormatter {
+/**
+ * HexInteger to string format helpers.
+ */
+public final class HexIntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
 
+    private HexIntegerFormatter() {}
+
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
         long unsigned = Math.abs(v);
         unsigned += v < 0 ? 1L << 16 : 0;
         return format0(sb, unsigned, flags, width);
     }
 
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
         long unsigned = Math.abs(v);
         unsigned += v < 0 ? 1L << 32 : 0;
         return format0(sb, unsigned, flags, width);
     }
 
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
         return format0(sb, v, flags, width);
     }

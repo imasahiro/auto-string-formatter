@@ -38,6 +38,6 @@ class FixedString implements FormatString {
 
     @Override
     public String toString() {
-        return "FixedString(text:" + text + ")";
+        return "FixedString(text:" + text + ')';
     }
 }

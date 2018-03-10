@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Masahiro Ide
+ * Copyright (C) 2018 Masahiro Ide
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,3 @@
  */
 
 package com.github.imasahiro.stringformatter.processor.benchmark;
-
-import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
-import com.github.imasahiro.stringformatter.annotation.Format;
-
-/**
- * Formatter definition for integer to string formatting.
- */
-public final class StringBenchFormatter {
-    public static final String FORMAT = "Hi %s; Hi to you %s";
-
-    private StringBenchFormatter() {}
-
-    @AutoStringFormatter
-    interface Formatter {
-        @Format(FORMAT)
-        String format(int thisName, int otherName);
-    }
-}

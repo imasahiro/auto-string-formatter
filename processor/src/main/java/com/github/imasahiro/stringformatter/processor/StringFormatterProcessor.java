@@ -114,7 +114,9 @@ public class StringFormatterProcessor extends AbstractProcessor {
             return ImmutableList.of();
         }
         return filterFormatAnnotatedMethods(
-                MoreElements.getLocalAndInheritedMethods(element, processingEnv.getElementUtils()))
+                MoreElements.getLocalAndInheritedMethods(element,
+                                                         processingEnv.getTypeUtils(),
+                                                         processingEnv.getElementUtils()))
                 .stream()
                 .map(this::buildFormatterMethod)
                 .collect(toImmutableList());

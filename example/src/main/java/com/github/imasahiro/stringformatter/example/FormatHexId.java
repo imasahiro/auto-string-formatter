@@ -19,7 +19,14 @@ package com.github.imasahiro.stringformatter.example;
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
+/**
+ * An example usage of {@link AutoStringFormatter}.
+ */
+@SuppressWarnings({ "checkstyle:UncommentedMain", "checkstyle:HideUtilityClassConstructor" })
 public class FormatHexId {
+    /**
+     * Entry point.
+     */
     public static void main(String... args) {
         long upperId = 0x0123456789abcdefL;
         long lowerId = 0x0123456789abcdefL;

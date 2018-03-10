@@ -18,7 +18,15 @@ package com.github.imasahiro.stringformatter.example;
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
+/**
+ * An example usage of {@link AutoStringFormatter}.
+ */
+@SuppressWarnings({ "checkstyle:UncommentedMain", "checkstyle:HideUtilityClassConstructor" })
 public class Example2 {
+
+    /**
+     * Entry point.
+     */
     public static void main(String... args) {
         long version = 10;
         long mainVersion = (version - 1) / 100 + 1;

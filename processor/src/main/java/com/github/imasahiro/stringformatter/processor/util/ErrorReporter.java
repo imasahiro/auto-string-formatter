@@ -20,6 +20,9 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
 
+/**
+ * An class for logging/reporting compilation error/warning messages.
+ */
 public class ErrorReporter {
     private final Messager messager;
 
@@ -35,6 +38,9 @@ public class ErrorReporter {
         messager.printMessage(Diagnostic.Kind.ERROR, msg, e);
     }
 
+    /**
+     * Reports error message and stop annotation processing.
+     */
     public void fatal(String msg, Element e) {
         error(msg, e);
         throw new AbortProcessingException();

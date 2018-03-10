@@ -18,7 +18,14 @@ package com.github.imasahiro.stringformatter.example;
 import com.github.imasahiro.stringformatter.annotation.AutoStringFormatter;
 import com.github.imasahiro.stringformatter.annotation.Format;
 
+/**
+ * An example usage of {@link AutoStringFormatter}.
+ */
+@SuppressWarnings({ "checkstyle:UncommentedMain", "checkstyle:HideUtilityClassConstructor" })
 public class Example {
+    /**
+     * Entry point.
+     */
     public static void main(String... args) {
         System.out.println(new Example_Formatter().formatTo("Alice", "Bob"));
     }

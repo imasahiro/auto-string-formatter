@@ -15,7 +15,10 @@
  */
 package com.github.imasahiro.stringformatter.runtime.integers;
 
-public class IntegerFormatter {
+/**
+ * Integer to string format helpers.
+ */
+public final class IntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
     private static final boolean ENSURE_CAPACITY = true;
     private static final boolean DISABLE_INT_TO_ASCII_UNROLLING = false;
@@ -33,16 +36,27 @@ public class IntegerFormatter {
             '9', '0', '9', '1', '9', '2', '9', '3', '9', '4', '9', '5', '9', '6', '9', '7', '9', '8', '9', '9'
     };
 
+    private IntegerFormatter() {}
+
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
         long unsigned = writeLeftPadding(sb, v, flags, width);
         return formatTo0(sb, unsigned);
     }
 
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
         long unsigned = writeLeftPadding(sb, v, flags, width);
         return formatTo0(sb, unsigned);
     }
 
+    /**
+     * Formats {@code v} to {@link String}.
+     */
     public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
         long unsigned = writeLeftPadding(sb, v, flags, width);
         return formatTo0(sb, unsigned);

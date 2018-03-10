@@ -56,11 +56,10 @@ class FormatSpecifier implements FormatString {
     @Override
     public String toString() {
         return "FormatSpecifier(" +
-               "index:" + index + "," +
-               "width:" + width + "," +
-               "precision:" + precision + "," +
+               "index:" + index + ',' +
+               "width:" + width + ',' +
+               "precision:" + precision + ',' +
                "flags:" + Joiner.on(',').join(flags) +
-               ")";
+               ')';
     }
-
 }

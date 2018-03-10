@@ -64,5 +64,4 @@ final class IntegerUtils {
             return 1;
         }
     }
-
 }

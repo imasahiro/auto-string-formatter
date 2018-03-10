@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Masahiro Ide
+ * Copyright (C) 2018 Masahiro Ide
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,4 @@
  * limitations under the License.
  */
 
-package com.github.imasahiro.stringformatter.processor.util;
-
-public final class AbortProcessingException extends RuntimeException {
-    private static final long serialVersionUID = 1478917429610333843L;
-}
+package com.github.imasahiro.stringformatter.processor;
