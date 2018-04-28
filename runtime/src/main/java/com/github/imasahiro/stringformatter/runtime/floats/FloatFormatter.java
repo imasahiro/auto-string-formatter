@@ -24,7 +24,7 @@ public final class FloatFormatter {
     private FloatFormatter() {}
 
     /**
-     * Formats {@code v} to {@link String}.
+     * Formats {@code double} to {@link String}.
      */
     public static StringBuilder formatTo(StringBuilder sb, double v, int width) {
         return Grisu.formatDouble(sb, v);

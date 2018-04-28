@@ -25,11 +25,11 @@ final class Pair<A, B> {
         this.second = second;
     }
 
-    public A getFirst() {
+    A first() {
         return first;
     }
 
-    public B getSecond() {
+    B second() {
         return second;
     }
 }

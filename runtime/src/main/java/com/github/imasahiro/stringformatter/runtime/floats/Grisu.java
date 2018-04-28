@@ -33,8 +33,7 @@ public final class Grisu {
     public static StringBuilder formatDouble(StringBuilder sb, double value) {
         GrisuResult r = grisu2(value, sb);
         sb.append('e');
-        fillExponent(sb, r.k);
-        return sb;
+        return fillExponent(sb, r.k);
     }
 
     static class GrisuResult {
@@ -50,8 +49,8 @@ public final class Grisu {
     private static GrisuResult grisu2(double v, StringBuilder buffer) {
         GrisuResult result = new GrisuResult(0, 0);
         Pair<DiyFp, DiyFp> normalized = DiyFp.normalizedBoundaries(v);
-        final DiyFp w_m = normalized.getFirst();
-        final DiyFp w_p = normalized.getSecond();
+        final DiyFp w_m = normalized.first();
+        final DiyFp w_p = normalized.second();
 
         int mk = KComp.k_comp(w_p.getE() + q, alpha, gamma);
         DiyFp cMk = CachedPowerOfTens.get(mk);
@@ -100,7 +99,7 @@ public final class Grisu {
         r.k += kappa;
     }
 
-    private static void fillExponent(StringBuilder sb, int k) {
-        IntegerFormatter.formatTo(sb, k, 0, 0);
+    private static StringBuilder fillExponent(StringBuilder sb, int k) {
+        return IntegerFormatter.formatTo(sb, k, 0, 0);
     }
 }

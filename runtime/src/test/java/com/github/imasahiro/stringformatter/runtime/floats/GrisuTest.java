@@ -20,7 +20,7 @@ import org.junit.Test;
 
 public class GrisuTest {
     @Test
-    public void testFormatDouble() throws Exception {
+    public void formatDouble() throws Exception {
         System.out.println(String.format("%10.20f", Math.PI));
         System.out.println(Grisu.formatDouble(new StringBuilder(), Math.PI));
         System.out.println(String.format("%10.20f", Math.E));
