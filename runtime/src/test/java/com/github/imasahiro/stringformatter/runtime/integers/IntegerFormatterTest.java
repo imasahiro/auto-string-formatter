@@ -27,8 +27,30 @@ public class IntegerFormatterTest {
         return sb.toString();
     }
 
+    private static String run(int i, int width, boolean printZero) {
+        StringBuilder sb = new StringBuilder();
+        IntegerFormatter.formatTo(sb, i, printZero ? IntegerFormatter.PADDED_WITH_ZEROS : 0, width);
+        return sb.toString();
+    }
+
+    private static String run(short i, int width, boolean printZero) {
+        StringBuilder sb = new StringBuilder();
+        IntegerFormatter.formatTo(sb, i, printZero ? IntegerFormatter.PADDED_WITH_ZEROS : 0, width);
+        return sb.toString();
+    }
+
     @Test
-    public void testFormatToLong() {
+    public void formatToMaxMin() {
+        assertEquals(Short.toString(Short.MAX_VALUE), run(Short.MAX_VALUE, 0, false));
+        assertEquals(Short.toString(Short.MIN_VALUE), run(Short.MIN_VALUE, 0, false));
+        assertEquals(Integer.toString(Integer.MAX_VALUE), run(Integer.MAX_VALUE, 0, false));
+        assertEquals(Integer.toString(Integer.MIN_VALUE), run(Integer.MIN_VALUE, 0, false));
+        assertEquals(Long.toString(Long.MAX_VALUE), run(Long.MAX_VALUE, 0, false));
+        assertEquals(Long.toString(Long.MIN_VALUE), run(Long.MIN_VALUE, 0, false));
+    }
+
+    @Test
+    public void formatToLong() {
         assertEquals(Long.toString(1234567890123456789L), run(1234567890123456789L, 0, false));
         assertEquals(Long.toString(123456789012345678L), run(123456789012345678L, 0, false));
         assertEquals(Long.toString(12345678901234567L), run(12345678901234567L, 0, false));
@@ -52,7 +74,7 @@ public class IntegerFormatterTest {
     }
 
     @Test
-    public void testFormatToNegativeLong() {
+    public void formatToNegativeLong() {
         assertEquals(Long.toString(-1234567890123456789L), run(-1234567890123456789L, 0, false));
         assertEquals(Long.toString(-123456789012345678L), run(-123456789012345678L, 0, false));
         assertEquals(Long.toString(-12345678901234567L), run(-12345678901234567L, 0, false));
@@ -75,7 +97,7 @@ public class IntegerFormatterTest {
     }
 
     @Test
-    public void testFormatToLong_width() {
+    public void formatToLong_width() {
         assertEquals(String.format("%30d", 1234567890123456789L), run(1234567890123456789L, 30, false));
         assertEquals(String.format("%30d", 123456789012345678L), run(123456789012345678L, 30, false));
         assertEquals(String.format("%30d", 12345678901234567L), run(12345678901234567L, 30, false));
@@ -99,7 +121,7 @@ public class IntegerFormatterTest {
     }
 
     @Test
-    public void testFormatToNegativeLong_width() {
+    public void formatToNegativeLong_width() {
         assertEquals(String.format("%30d", -1234567890123456789L), run(-1234567890123456789L, 30, false));
         assertEquals(String.format("%30d", -123456789012345678L), run(-123456789012345678L, 30, false));
         assertEquals(String.format("%30d", -12345678901234567L), run(-12345678901234567L, 30, false));
@@ -122,7 +144,7 @@ public class IntegerFormatterTest {
     }
 
     @Test
-    public void testFormatToLong_width_padded_with_zero() {
+    public void formatToLong_width_padded_with_zero() {
         assertEquals(String.format("%030d", 1234567890123456789L), run(1234567890123456789L, 30, true));
         assertEquals(String.format("%030d", 123456789012345678L), run(123456789012345678L, 30, true));
         assertEquals(String.format("%030d", 12345678901234567L), run(12345678901234567L, 30, true));
@@ -146,7 +168,7 @@ public class IntegerFormatterTest {
     }
 
     @Test
-    public void testFormatToNegativeLong_width_padded_with_zero() {
+    public void formatToNegativeLong_width_padded_with_zero() {
         assertEquals(String.format("%030d", -1234567890123456789L), run(-1234567890123456789L, 30, true));
         assertEquals(String.format("%030d", -123456789012345678L), run(-123456789012345678L, 30, true));
         assertEquals(String.format("%030d", -12345678901234567L), run(-12345678901234567L, 30, true));

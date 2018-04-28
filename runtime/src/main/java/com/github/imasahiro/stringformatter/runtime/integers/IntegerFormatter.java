@@ -36,44 +36,50 @@ public final class IntegerFormatter {
             '9', '0', '9', '1', '9', '2', '9', '3', '9', '4', '9', '5', '9', '6', '9', '7', '9', '8', '9', '9'
     };
 
+    // Long.toString(-1 * Long.MIN_VALUE)
+    private static final String LONG_MIN_ABS_VALUE = "9223372036854775808";
+
     private IntegerFormatter() {}
 
     /**
      * Formats {@code v} to {@link String}.
      */
     public static StringBuilder formatTo(StringBuilder sb, short v, int flags, int width) {
-        long unsigned = writeLeftPadding(sb, v, flags, width);
-        return formatTo0(sb, unsigned);
+        long abs = writeLeftPadding(sb, v, flags, width);
+        return formatTo0(sb, abs);
     }
 
     /**
      * Formats {@code v} to {@link String}.
      */
     public static StringBuilder formatTo(StringBuilder sb, int v, int flags, int width) {
-        long unsigned = writeLeftPadding(sb, v, flags, width);
-        return formatTo0(sb, unsigned);
+        long abs = writeLeftPadding(sb, v, flags, width);
+        return formatTo0(sb, abs);
     }
 
     /**
      * Formats {@code v} to {@link String}.
      */
     public static StringBuilder formatTo(StringBuilder sb, long v, int flags, int width) {
-        long unsigned = writeLeftPadding(sb, v, flags, width);
-        return formatTo0(sb, unsigned);
+        long abs = writeLeftPadding(sb, v, flags, width);
+        if (v == Long.MIN_VALUE) {
+            return sb.append(LONG_MIN_ABS_VALUE);
+        }
+        return formatTo0(sb, abs);
     }
 
-    private static StringBuilder formatTo0(StringBuilder sb, long unsigned) {
+    private static StringBuilder formatTo0(StringBuilder sb, long abs) {
         if (DISABLE_INT_TO_ASCII_UNROLLING) {
-            return formatWithByteArray(sb, unsigned);
+            return formatWithByteArray(sb, abs);
         } else {
-            return formatToStringUnrolled(sb, unsigned);
+            return formatToStringUnrolled(sb, abs);
         }
     }
 
     private static long writeLeftPadding(StringBuilder sb, long val, int flags, int width) {
-        long unsigned = Math.abs(val);
+        long abs = Math.abs(val);
         boolean negative = val < 0;
-        int len = IntegerUtils.log10(unsigned) + (negative ? 1 : 0);
+        int len = IntegerUtils.log10(abs) + (negative ? 1 : 0);
         if (ENSURE_CAPACITY) {
             sb.ensureCapacity(sb.length() + len + width);
         }
@@ -90,7 +96,7 @@ public final class IntegerFormatter {
                 sb.append('0');
             }
         }
-        return unsigned;
+        return abs;
     }
 
     private static StringBuilder formatToStringUnrolled(StringBuilder sb, long val) {
