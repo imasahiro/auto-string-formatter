@@ -27,6 +27,28 @@ public class HexIntegerFormatterTest {
         return sb.toString();
     }
 
+    private static String run(int i, int width, boolean printZero) {
+        StringBuilder sb = new StringBuilder();
+        HexIntegerFormatter.formatTo(sb, i, printZero ? HexIntegerFormatter.PADDED_WITH_ZEROS : 0, width);
+        return sb.toString();
+    }
+
+    private static String run(short i, int width, boolean printZero) {
+        StringBuilder sb = new StringBuilder();
+        HexIntegerFormatter.formatTo(sb, i, printZero ? HexIntegerFormatter.PADDED_WITH_ZEROS : 0, width);
+        return sb.toString();
+    }
+
+    @Test
+    public void formatTo() {
+        assertEquals(Integer.toHexString(Short.MAX_VALUE), run(Short.MAX_VALUE, 0, false));
+        assertEquals("18000", run(Short.MIN_VALUE, 0, false));
+        assertEquals(Integer.toHexString(Integer.MAX_VALUE), run(Integer.MAX_VALUE, 0, false));
+        assertEquals(Integer.toHexString(Integer.MIN_VALUE), run(Integer.MIN_VALUE, 0, false));
+        assertEquals(Long.toHexString(Long.MAX_VALUE), run(Long.MAX_VALUE, 0, false));
+        assertEquals(Long.toHexString(Long.MIN_VALUE), run(Long.MIN_VALUE, 0, false));
+    }
+
     @Test
     public void testFormatToLong() {
         assertEquals(Long.toHexString(1234567890123456789L), run(1234567890123456789L, 0, false));
