@@ -82,8 +82,8 @@ sensible defaults. By applying them, you can:
            mavenCentral()
        }
        dependencies {
-           classpath 'com.google.gradle:osdetector-gradle-plugin:1.4.0'
-           classpath 'io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE'
+           classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+           classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
        }
    }
 
@@ -169,7 +169,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.google.gradle:osdetector-gradle-plugin:1.4.0"
+        classpath "com.google.gradle:osdetector-gradle-plugin:1.6.0"
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
     }
 }
 
@@ -241,11 +242,16 @@ All projects will get the following extension properties:
 
 - `copyrightFooter` - the copyright footer HTML fragment generated from
   `inceptionYear`, `authorUrl` and `authorName` in `gradle.properties`
-
   - e.g. `&copy; Copyright 2015&ndash;2018 <a href="https://john.doe.com/">John Doe</a>. All rights reserved.`
-
 - `gitPath` - the path to the `git` command. `null` if Git is not available.
 - `executeGit(...args)` - executes a Git command with the specified arguments
+- `hasSourceDirectory(name)` - tells if the project has any source directory that matches `<projectDir>/src/*/<name>`, e.g.
+
+  ```java
+  if (project.ext.hasSourceDirectory('thrift')) {
+      println "${project} contains Thrift source files."
+  }
+  ```
 
 ## Using flags
 
@@ -270,14 +276,22 @@ configure(projectsWithFlags('java')) {
         println "A Java project '${project.path}' will be published to a Maven repository."
     }
 }
+
+// Running a certain task after all Java projects are evaluated:
+afterProjectsWithFlag('java') { Set<Project> projects ->
+    println 'All Java projects have been evaluated: ${projects}'
+}
+afterProjectsWithFlags(['java', 'relocated']) { Set<Project> projects ->
+    println 'All Java projects with class relocation have been evaluated: ${projects}'
+}
 ```
 
-If you added the snippet above to `build.gradle`, `./gradlew` will show the 
+If you added the snippet above to `build.gradle`, `./gradlew` will show the
 following output:
 
 ```
 $ ./gradlew
-> Configure project : 
+> Configure project :
 Project ':' has flags: []
 Project ':bar' has flags: [java]
 Project ':foo' has flags: [java, publish]
@@ -319,17 +333,31 @@ When a project has a `java` flag:
 - Checkstyle validation is enabled using `checkstyle` plugin if Checkstyle
   configuration file exists at `<project_root>/settings/checkstyle/checkstyle.xml`
 
-    - A special configuration property `checkstyleConfigDir` is set so you can
-      access the external files such as `suppressions.xml` from `checkstyle.xml`.
-    - You can choose Checkstyle version by specifying it in `dependencies.yml`:
+  - A special configuration property `checkstyleConfigDir` is set so you can
+    access the external files such as `suppressions.xml` from `checkstyle.xml`.
+  - You can choose Checkstyle version by specifying it in `dependencies.yml`:
 
-      ```yaml
-      com.puppycrawl.tools:
-        checkstyle: { version: '8.5' }
-      ```
+    ```yaml
+    com.puppycrawl.tools:
+      checkstyle: { version: '8.5' }
+    ```
 
 - Test coverage report is enabled using `jacoco` plugin if `-Pcoverage` option
   is specified.
+
+  - You can exclude certain packages from the coverage report using the
+    `jacocoExclusions` property:
+
+    ```groovy
+    rootProject {
+        ext {
+            jacocoExclusions = [
+                '/com/example/generated/sources/**',
+                '/com/example/third/party/**'
+            ]
+        }
+    }
+    ```
 
 - [Jetty ALPN agent](https://github.com/jetty-project/jetty-alpn-agent) is
   loaded automatically when launching a Java process if you specified it in
@@ -353,6 +381,9 @@ When a project has a `java` flag:
       - https://developers.google.com/protocol-buffers/docs/reference/java/
   ```
 
+  If you are in an environment with restricted network access, you can specify
+  `-PofflineJavadoc` option to disable the downloads.
+
 - The `.proto` files under `src/*/proto` will be compiled into Java code with
   [protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin).
 
@@ -364,13 +395,24 @@ When a project has a `java` flag:
 
 - The `.thrift` files under `src/*/thrift` will be compiled into Java code.
 
-  - Thrift compiler 0.10 will be used by default. Override `thriftVersion`
+  - Thrift compiler 0.11 will be used by default. Override `thriftVersion`
     property if you prefer 0.9:
 
     ```groovy
     ext {
         thriftVersion = '0.9'
         disableThriftJson() // Because Thrift 0.9 does not support JSON target
+    }
+    ```
+
+  - You can also override the source and include directories:
+
+    ```groovy
+    ext {
+        thriftSrcDirs = ["$projectDir/src/main/foo"]
+        thriftIncludeDirs = ["$projectDir/src/main/foo-include"]
+        testThriftSrcDirs = ["$projectDir/src/test/bar"]
+        testThriftIncludeDirs = ["$projectDir/src/test/bar-include"]
     }
     ```
 
@@ -516,7 +558,7 @@ The task called `release` is added at the top level project. It will update the
 update the `version` property again to a next version.
 
 ```
-$ ./gradlew release -PreleaseVersion=0.0.1 -PnextVersion=0.0.2-SNAPSHOT
+$ ./gradlew release -PreleaseVersion=0.0.1 -PnextVersion=0.0.2
 ...
 Tagged: myproject-0.0.1
 ...

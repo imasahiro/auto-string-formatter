@@ -3,9 +3,6 @@ def checkstyleConfigDir = "${rootProject.projectDir}/settings/checkstyle"
 def checkstyleEnabled = new File(checkstyleConfigDir).isDirectory() &&
                         new File("${checkstyleConfigDir}/checkstyle.xml").isFile()
 
-// Enable JaCoCo test coverage when '-Pcoverage' option is specified.
-def jacocoEnabled = project.hasProperty('coverage')
-
 configure(rootProject) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
@@ -19,15 +16,41 @@ configure(projectsWithFlags('java')) {
 
     archivesBaseName = project.ext.artifactId
 
+    // Delete the generated source directory on clean.
+    ext {
+        genSrcDir = "${projectDir}/gen-src"
+    }
+    clean {
+        delete project.ext.genSrcDir
+    }
+
+    // Add the generated source directories to the source sets.
+    project.sourceSets.all { sourceSet ->
+        sourceSet.java.srcDir file("${project.ext.genSrcDir}/${sourceSet.name}/java")
+        sourceSet.resources.srcDir file("${project.ext.genSrcDir}/${sourceSet.name}/resources")
+    }
+
     // Set the sensible compiler options.
     tasks.withType(JavaCompile) {
+        def task = delegate
         sourceCompatibility = project.findProperty('javaSourceCompatibility') ?: '1.8'
         targetCompatibility = project.findProperty('javaTargetCompatibility') ?: '1.8'
         options.encoding = 'UTF-8'
         options.warnings = false
         options.debug = true
-        options.incremental = true
         options.compilerArgs += '-parameters'
+        project.configurations.each { Configuration cfg ->
+            if (cfg.name == 'annotationProcessor' || cfg.name.endsWith('AnnotationProcessor')) {
+                cfg.withDependencies { deps ->
+                    // Use incremental compilation only when there are no annotation processors,
+                    // because it seems to cause compilation errors for some processors such as Lombok.
+                    def useIncrementalCompilation = deps.size() == 0
+                    options.incremental = useIncrementalCompilation
+                    logger.info("${useIncrementalCompilation ? 'Enabling' : 'Disabling'} " +
+                                "incremental compilation for '${task.path}'")
+                }
+            }
+        }
     }
 
     // Generate a source JAR.
@@ -86,42 +109,6 @@ configure(projectsWithFlags('java')) {
 
         test {
             dependsOn tasks.checkstyle
-        }
-    }
-
-    // Generate JaCoCo reports.
-    if (jacocoEnabled && !project.hasFlags('no_aggregation')) {
-        apply plugin: 'jacoco'
-
-        project.addFlags('coverage')
-
-        tasks.withType(Test) {
-            jacoco {
-                enabled = true
-                append = false
-            }
-        }
-
-        jacocoTestReport {
-            reports {
-                csv.enabled = false
-                xml.enabled = true
-                html.enabled = true
-            }
-
-            afterEvaluate {
-                // Include all sources and classes directories so that the report includes other modules.
-                sourceDirectories = files(projectsWithFlags('java').inject([], { a, b ->
-                    a + b.sourceSets.main.java.srcDirs }
-                ))
-                classDirectories = files(projectsWithFlags('java').inject([], { a, b ->
-                    b.hasFlags('no_aggregation') ? a : a + b.sourceSets.main.output.classesDirs
-                }))
-            }
-        }
-
-        tasks.withType(Test) {
-            finalizedBy tasks.jacocoTestReport
         }
     }
 }
