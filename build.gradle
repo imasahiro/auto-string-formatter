@@ -5,12 +5,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
-        classpath 'com.novoda:bintray-release:0.8.1'
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.1'
+        classpath 'com.novoda:bintray-release:0.9'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
         classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.7'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.18'
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.9.3'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.19'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.10.0'
     }
 }
 

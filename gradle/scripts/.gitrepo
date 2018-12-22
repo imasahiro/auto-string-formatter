@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/line/gradle-scripts.git
+	remote = git@github.com:line/gradle-scripts.git
 	branch = master
-	commit = aa756c4c9c3be21855bb185fda6c912a437061df
-	parent = 39318f3e3388f7d3d7f3618d26d63401d5976bb5
+	commit = 7e70085b7383cb7f5b0843accc74e8c74ff3acaa
+	parent = f5f4219c56dca4baf844d05c27bec317bb42fad7
 	cmdver = 0.3.1

@@ -1,6 +1,6 @@
 com.google.guava:
   guava:
-    version: &GUAVA_VERSION '26.0-jre'
+    version: &GUAVA_VERSION '27.0.1-jre'
   guava-testlib:
     version: *GUAVA_VERSION
 
@@ -14,17 +14,17 @@ com.github.spullara.mustache.java:
   compiler: { version: '0.9.5' }
 
 com.puppycrawl.tools:
-  checkstyle: { version: '8.8' }
+  checkstyle: { version: '8.15' }
 
 com.squareup:
   javapoet: { version: '1.11.1' }
 
 gradle.plugin.net.davidecavestro:
-  gradle-jxr-plugin: { version: 0.2.1 }
+  gradle-jxr-plugin: { version: '0.2.1' }
 
 it.unimi.dsi:
   fastutil:
-    version: '8.1.1'
+    version: '8.2.2'
     relocations:
     - from: it.unimi.dsi.fastutil
       to: com.linecorp.armeria.internal.shaded.fastutil
@@ -42,5 +42,5 @@ org.assertj:
   assertj-core: { version: '3.11.1' }
 
 org.openjdk.jmh:
-  jmh-core: { version: &JMH_VERSION '1.20' }
+  jmh-core: { version: &JMH_VERSION '1.21' }
   jmh-generator-annprocess: { version: *JMH_VERSION }
