@@ -13,5 +13,7 @@ jmh {
     fork = 2
     iterations = 10
     warmupIterations = 10
+    timeOnIteration = '1s'
+    warmup = '1s'
     zip64 = true
 }
