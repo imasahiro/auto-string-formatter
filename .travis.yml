@@ -27,6 +27,7 @@ install:
 - true
 script:
 - "./gradlew --no-daemon --stacktrace -Pcoverage checkstyle test publishMavenPublicationToMavenLocal -x javadoc"
+- "./test/run_tests.sh"
 before_cache:
 - find $HOME/.gradle/caches -name '*.lock' -delete
 after_success:
