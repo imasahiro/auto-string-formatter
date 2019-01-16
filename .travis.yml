@@ -16,16 +16,17 @@ cache:
 env:
   global:
   - _JAVA_OPTIONS=
-  - JAVA_HOME=$HOME/.jdk/default
+  - JAVA_HOME=$HOME/.jdk/default_11
   - PATH=$JAVA_HOME/bin:$PATH
   - GRADLE_OPTS=-Xmx1280m
 before_install:
-- ".travis/install-jdk.sh"
+- ".travis/install-jdk8.sh"
+- ".travis/install-jdk11.sh"
 - "./gradlew --version"
 install:
 - true
 script:
-- "./gradlew --no-daemon --stacktrace -Pcoverage checkstyle test build"
+- "./gradlew --no-daemon --stacktrace -Pcoverage checkstyle test publishMavenPublicationToMavenLocal -x javadoc"
 before_cache:
 - find $HOME/.gradle/caches -name '*.lock' -delete
 after_success:
