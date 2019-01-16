@@ -5,6 +5,7 @@ apply plugin: 'me.champeau.gradle.jmh'
 dependencies {
     annotationProcessor project(':processor')
     compile project(':runtime')
+    compileOnly 'javax.annotation:javax.annotation-api'
     compileOnly 'javax.inject:javax.inject'
 }
 

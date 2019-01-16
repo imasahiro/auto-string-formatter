@@ -9,9 +9,9 @@ dependencies {
     compile 'com.google.auto:auto-common'
     compile 'com.google.guava:guava'
     compile 'com.squareup:javapoet'
+    compile 'javax.annotation:javax.annotation-api'
     compile 'javax.inject:javax.inject'
 
-    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
     testCompile 'com.google.testing.compile:compile-testing'
 }
 
