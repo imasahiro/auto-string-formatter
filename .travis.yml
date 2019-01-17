@@ -5,6 +5,8 @@ os:
 branches:
   only:
   - master
+jdk:
+- openjdk11
 
 cache:
   directories:
@@ -16,18 +18,22 @@ cache:
 env:
   global:
   - _JAVA_OPTIONS=
-  - JAVA_HOME=$HOME/.jdk/default_11
-  - PATH=$JAVA_HOME/bin:$PATH
   - GRADLE_OPTS=-Xmx1280m
 before_install:
-- ".travis/install-jdk8.sh"
-- ".travis/install-jdk11.sh"
 - "./gradlew --version"
 install:
 - true
 script:
-- "./gradlew --no-daemon --stacktrace -Pcoverage checkstyle test publishMavenPublicationToMavenLocal -x javadoc"
-- "./test/run_tests.sh"
+# build with OpenJDK 11
+- "./gradlew --no-daemon --stacktrace -Pcoverage checkstyle test publishToMavenLocal -x javadoc"
+- cd test
+# test with OpenJDK 11
+- "./gradlew --no-daemon --stacktrace clean build"
+- "java -jar ./build/libs/auto-string-formatter-test-*.jar"
+# test with Oracle JDK 8
+- jdk_switcher use oraclejdk8
+- "./gradlew --no-daemon --stacktrace clean build"
+- "java -jar ./build/libs/auto-string-formatter-test-*.jar"
 before_cache:
 - find $HOME/.gradle/caches -name '*.lock' -delete
 after_success:
