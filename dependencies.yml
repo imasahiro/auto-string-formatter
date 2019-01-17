@@ -14,7 +14,7 @@ com.github.spullara.mustache.java:
   compiler: { version: '0.9.5' }
 
 com.puppycrawl.tools:
-  checkstyle: { version: '8.15' }
+  checkstyle: { version: '8.16' }
 
 com.squareup:
   javapoet: { version: '1.11.1' }
@@ -36,7 +36,7 @@ junit:
   junit: { version: '4.12' }
 
 me.champeau.gradle:
-  jmh-gradle-plugin: { version: '0.4.5' }
+  jmh-gradle-plugin: { version: '0.4.8' }
 
 org.assertj:
   assertj-core: { version: '3.11.1' }
