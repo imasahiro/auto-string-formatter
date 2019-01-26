@@ -5,12 +5,12 @@ archivesBaseName = 'auto-string-formatter-processor'
 dependencies {
     compile project(':runtime')
 
-    compile 'com.github.spullara.mustache.java:compiler:0.9.5'
-    compile 'com.google.auto:auto-common:0.10'
-    compile 'com.google.guava:guava:27.0.1-jre'
-    compile 'com.squareup:javapoet:1.11.1'
-    compile 'javax.annotation:javax.annotation-api:1.3.2'
-    compile 'javax.inject:javax.inject:1'
+    compile 'com.github.spullara.mustache.java:compiler'
+    compile 'com.google.auto:auto-common'
+    compile 'com.google.guava:guava'
+    compile 'com.squareup:javapoet'
+    compile 'javax.annotation:javax.annotation-api'
+    compile 'javax.inject:javax.inject'
 
     testCompile 'com.google.testing.compile:compile-testing'
 }
