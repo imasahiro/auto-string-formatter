@@ -5,6 +5,8 @@ os:
 branches:
   only:
   - master
+jdk:
+- openjdk11
 
 cache:
   directories:
@@ -16,11 +18,8 @@ cache:
 env:
   global:
   - _JAVA_OPTIONS=
-  - JAVA_HOME=$HOME/.jdk/default
-  - PATH=$JAVA_HOME/bin:$PATH
   - GRADLE_OPTS=-Xmx1280m
 before_install:
-- ".travis/install-jdk.sh"
 - "./gradlew --version"
 install:
 - true
