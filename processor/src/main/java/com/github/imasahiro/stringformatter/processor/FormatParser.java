@@ -31,7 +31,8 @@ final class FormatParser {
 
     private static final Pattern FORMAT_SPECIFIER_PATTERN = Pattern.compile(FORMAT_SPECIFIER);
 
-    private FormatParser() {}
+    private FormatParser() {
+    }
 
     /**
      * Parse format specifiers in the format string.

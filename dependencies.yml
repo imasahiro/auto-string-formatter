@@ -1,6 +1,6 @@
 com.google.guava:
   guava:
-    version: &GUAVA_VERSION '27.0.1-jre'
+    version: &GUAVA_VERSION '27.1-jre'
   guava-testlib:
     version: *GUAVA_VERSION
 
@@ -8,13 +8,13 @@ com.google.auto:
   auto-common: { version: '0.10' }
 
 com.google.testing.compile:
-  compile-testing: { version: '0.15' }
+  compile-testing: { version: '0.17' }
 
 com.github.spullara.mustache.java:
-  compiler: { version: '0.9.5' }
+  compiler: { version: '0.9.6' }
 
 com.puppycrawl.tools:
-  checkstyle: { version: '8.16' }
+  checkstyle: { version: '8.21' }
 
 com.squareup:
   javapoet: { version: '1.11.1' }
@@ -42,7 +42,7 @@ me.champeau.gradle:
   jmh-gradle-plugin: { version: '0.4.8' }
 
 org.assertj:
-  assertj-core: { version: '3.11.1' }
+  assertj-core: { version: '3.12.2' }
 
 org.openjdk.jmh:
   jmh-core: { version: &JMH_VERSION '1.21' }

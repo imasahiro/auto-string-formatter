@@ -25,7 +25,8 @@ import com.github.imasahiro.stringformatter.annotation.Format;
 public final class StringBenchFormatter {
     public static final String FORMAT = "Hi %s; Hi to you %s";
 
-    private StringBenchFormatter() {}
+    private StringBenchFormatter() {
+    }
 
     @AutoStringFormatter
     interface Formatter {

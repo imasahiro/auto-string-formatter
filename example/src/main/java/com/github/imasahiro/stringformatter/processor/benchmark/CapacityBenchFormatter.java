@@ -25,7 +25,8 @@ import com.github.imasahiro.stringformatter.annotation.Format;
 public final class CapacityBenchFormatter {
     public static final String FORMAT = "%32d%32d%32d%32d%32d%32d";
 
-    private CapacityBenchFormatter() {}
+    private CapacityBenchFormatter() {
+    }
 
     @AutoStringFormatter
     interface Formatter {

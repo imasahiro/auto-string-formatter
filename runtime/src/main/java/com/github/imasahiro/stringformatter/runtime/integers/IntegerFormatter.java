@@ -39,7 +39,8 @@ public final class IntegerFormatter {
     // Long.toString(-1 * Long.MIN_VALUE)
     private static final String LONG_MIN_ABS_VALUE = "9223372036854775808";
 
-    private IntegerFormatter() {}
+    private IntegerFormatter() {
+    }
 
     /**
      * Formats {@code v} to {@link String}.

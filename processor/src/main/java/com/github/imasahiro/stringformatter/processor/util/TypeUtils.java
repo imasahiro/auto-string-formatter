@@ -23,7 +23,8 @@ import javax.lang.model.element.TypeElement;
  * Utility methods for generating types.
  */
 public final class TypeUtils {
-    private TypeUtils() {}
+    private TypeUtils() {
+    }
 
     public static boolean isInterface(TypeElement type) {
         return type.getKind() == ElementKind.INTERFACE;

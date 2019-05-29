@@ -21,7 +21,8 @@ package com.github.imasahiro.stringformatter.runtime.integers;
 public final class HexIntegerFormatter {
     public static final int PADDED_WITH_ZEROS = 1;
 
-    private HexIntegerFormatter() {}
+    private HexIntegerFormatter() {
+    }
 
     /**
      * Formats {@code v} to {@link String}.
