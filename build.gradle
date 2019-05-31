@@ -31,7 +31,7 @@ configure(projectsWithFlag('java', 'publish')) {
 
         publications = ['jar']
         publish = true
-        dryRun = true
+        // dryRun = true
         pkg {
             repo = 'maven'
             userOrg = 'imasahiro'
