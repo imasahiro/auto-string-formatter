@@ -25,7 +25,8 @@ import com.github.imasahiro.stringformatter.annotation.Format;
 public final class AllTypesBenchFormatter {
     public static final String FORMAT = "Benchmark - %s %s %s %s %s %s %s %s";
 
-    private AllTypesBenchFormatter() {}
+    private AllTypesBenchFormatter() {
+    }
 
     @AutoStringFormatter
     interface Formatter {

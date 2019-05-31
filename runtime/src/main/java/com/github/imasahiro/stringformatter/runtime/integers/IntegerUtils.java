@@ -49,7 +49,8 @@ public final class IntegerUtils {
             3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0
     };
 
-    private IntegerUtils() {}
+    private IntegerUtils() {
+    }
 
     /**
      * Returns the base 2 logarithm of a {@code long} value.

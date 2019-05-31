@@ -12,6 +12,9 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api'
     compile 'javax.inject:javax.inject'
 
+    if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
+      testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
+    }
     testCompile 'com.google.testing.compile:compile-testing'
 }
 

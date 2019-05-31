@@ -25,7 +25,8 @@ import com.github.imasahiro.stringformatter.annotation.Format;
 public final class IntegerStringifyBenchFormatter {
     public static final String FORMAT = "%d + %d * %d = %d";
 
-    private IntegerStringifyBenchFormatter() {}
+    private IntegerStringifyBenchFormatter() {
+    }
 
     @AutoStringFormatter
     interface Formatter {
