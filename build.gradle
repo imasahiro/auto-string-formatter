@@ -10,7 +10,6 @@ buildscript {
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE'
         classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.8'
         classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.10.1'
     }
 }
 
@@ -22,21 +21,6 @@ allprojects {
 }
 
 apply from: "${rootDir}/gradle/scripts/build-flags.gradle"
-
-configure(projectsWithFlags('publish')) {
-    apply plugin: 'pl.allegro.tech.build.axion-release'
-
-    scmVersion {
-        checks {
-            uncommittedChanges = true
-            aheadOfRemote = true
-        }
-        tag {
-            prefix = 'string-formatter'
-        }
-    }
-    project.version = scmVersion.version
-}
 
 // Configure all Java projects
 configure(projectsWithFlags('java')) {

@@ -3,8 +3,8 @@ rootProject.name = 'auto-string-formatter'
 apply from: "${rootDir}/gradle/scripts/settings-flags.gradle"
 
 // Published Java projects
-includeWithFlags ':processor', 'java'
-includeWithFlags ':runtime',   'java'
+includeWithFlags ':processor', 'java', 'publish'
+includeWithFlags ':runtime',   'java', 'publish'
 
 // Unpublished Java projects
 includeWithFlags ':example', 'java'
