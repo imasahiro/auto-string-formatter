@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.2'
-        classpath 'com.novoda:bintray-release:0.9.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE'
         classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.8'
         classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
@@ -21,6 +21,34 @@ allprojects {
 }
 
 apply from: "${rootDir}/gradle/scripts/build-flags.gradle"
+
+configure(projectsWithFlag('java', 'publish')) {
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        user = System.getenv("bintrayUser")
+        key = System.getenv("bintrayKey")
+
+        publications = ['jar']
+        publish = true
+        dryRun = true
+        pkg {
+            repo = 'maven'
+            userOrg = 'imasahiro'
+            name = project.archivesBaseName
+            desc = 'An annotation processor for auto-string-formatter to generate optimized String.format() methods'
+            websiteUrl = 'https://github.com/imasahiro/auto-string-formatter'
+            issueTrackerUrl = 'https://github.com/imasahiro/auto-string-formatter/issues'
+            vcsUrl = 'git@github.com:imasahiro/auto-string-formatter.git'
+            licenses = ['Apache-2.0']
+            publicDownloadNumbers = true
+            //Optional version descriptor
+            version {
+                name = project.version
+            }
+        }
+    }
+}
 
 // Configure all Java projects
 configure(projectsWithFlags('java')) {

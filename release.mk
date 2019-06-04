@@ -2,8 +2,8 @@
 check:
 	echo ${bintrayUser}
 	echo ${bintrayKey}
-	./gradlew -PdryRun=false -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey} -PdryRun=true runtime:bintrayUpload
-	./gradlew -PdryRun=false -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey} -PdryRun=true processor:bintrayUpload
+	./gradlew -PdryRun=true -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey} runtime:bintrayUpload --info
+	./gradlew -PdryRun=true -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey} processor:bintrayUpload --info
 
 release: check
 	./gradlew -PdryRun=false -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey} runtime:bintrayUpload

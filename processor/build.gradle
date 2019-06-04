@@ -1,5 +1,3 @@
-apply plugin: 'com.novoda.bintray-release'
-
 archivesBaseName = 'auto-string-formatter-processor'
 
 dependencies {
@@ -16,15 +14,4 @@ dependencies {
       testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
     }
     testCompile 'com.google.testing.compile:compile-testing'
-}
-
-publish {
-    artifactId = 'auto-string-formatter-processor'
-    desc = 'An annotation processor for auto-string-formatter to generate optimized String.format() methods'
-    userOrg = 'imasahiro'
-    groupId = 'com.github.imasahiro'
-    publishVersion = project.version
-    website = 'https://github.com/imasahiro/auto-string-formatter'
-    repository = 'git@github.com:imasahiro/auto-string-formatter.git'
-    licences = ['Apache-2.0']
 }
